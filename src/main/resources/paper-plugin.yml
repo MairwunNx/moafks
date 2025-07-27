@@ -1,0 +1,25 @@
+name: MoAfks
+version: '1.0.0'
+main: ru.mairwunnx.moafks.PluginUnit
+api-version: '1.21'
+prefix: "Mo'AFKs"
+load: STARTUP
+authors: [ mairwunnx ]
+description: "🛡️ Пауза в онлайне — теперь возможна. Плагин для PaperMC, который даёт игроку безопасный режим AFK: иммунитет к урону, отсутствие коллизий, игнор мобами, авто-детект неактивности и аккуратные визуальные эффекты. Всё — одной командой /afk."
+website: "https://github.com/mairwunnx/moafks"
+commands:
+  moafks:
+    description: "Mo’Afks: служебные команды (reload)."
+    usage: "/moafks reload"
+    permission: "moafks.reload"
+  afk:
+    description: "Войти/выйти из AFK. Формат: /afk [reason]"
+    usage: "/afk [reason]"
+    permission: "moafks.afk"
+permissions:
+  moafks.reload:
+    description: "Перезагрузка конфигурации Mo’Afks"
+    default: op
+  moafks.afk:
+    description: "Использование /afk"
+    default: true
