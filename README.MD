@@ -1,5 +1,8 @@
 # Mo’Afks
 
+[![Download](https://img.shields.io/github/v/release/mairwunnx/moafks?color=blue&label=Скачать%20JAR&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA2ElEQVR4nM3TMUoDQRQG4G9tLQQbC0m6VBY2QkBIZeEJLLyDR/AElh7BA3gCC0FIaSGCNmm0sBEsUvkXdmBZ3N0JpPKHx8y8N/OfmTdvmeMfcYgL3OEFD3jEHc5xkOcVOcUzPnCPU2zjO8ZfuMV+X4IjvGIVJ5jgM+ZfMcZmX4JzTHGGzR7/BpPQnHQlGOAhxG2sxXwd2xF7j9kgr1vEbYhHFf86jqPmtS1BFXdYYKstQRW3wSKOZ02+6QvMsNyUYBm3MMdOk28Rj/kV81/4wQ9+8bsowR9ghjX/yT+1TAAAAABJRU5ErkJggg==)](https://github.com/mairwunnx/moafks/releases/latest)
+
+
 🛡️ Пауза в онлайне — теперь возможна. Плагин для PaperMC, который даёт игроку безопасный режим AFK: иммунитет к урону, отсутствие коллизий, игнор мобами, авто-детект неактивности и
 аккуратные визуальные эффекты. Всё — одной командой /afk.
 
