@@ -1,0 +1,104 @@
+###############################################################################
+#                        Mo’Afks Configuration File                           #
+#                                                                             #
+#  - Плагин защищает игрока в состоянии AFK и не даёт абузить механику.       #
+#  - Блокирует коллизию/урон/голод, может ставить частицы, метку в нике.      #
+#  - Имеет авто-детекцию AFK и лимиты по времени, предупреждения и звуки.     #
+#                                                                             #
+#  Формат сообщений: Adventure/MiniMessage.                                   #
+#  Для звуков используйте namespaced ключи звуков (например,                  #
+#  'minecraft:entity.player.levelup').                                        #
+###############################################################################
+
+# Включает/выключает плагин целиком.
+enabled: true
+
+# Подробное логирование (в том числе отладочные сообщения).
+debug: false
+
+auto:
+  # Автоматический вход в AFK по бездействию.
+  enabled: true
+  # Секунд бездействия до авто-входа в AFK.
+  seconds: 60
+  # Сообщение игроку о входе в AFK автоматически.
+  enter_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <yellow>Вы автоматически вошли в режим AFK.</yellow> <gray>Двигайтесь или введите </gray><white>/afk</white><gray>, чтобы вернуться.</gray>"
+  # Сообщение для всех о том, что игрок вошел в AFK автоматически.
+  enter_broadcast_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <white><player></white> теперь <yellow>AFK</yellow> <gray>(неактивность)</gray>."
+  # Звук при авто-входе в AFK (namespaced ключ звука).
+  enter_sound: "minecraft:entity.experience_orb.pickup"
+  # Сообщение игроку о выходе из AFK автоматически (например, при движении).
+  exit_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <green>Вы автоматически вышли из AFK.</green>"
+  # Звук при авто-выходе из AFK.
+  exit_sound: "minecraft:entity.player.levelup"
+
+manual:
+  # Разрешить ручной вход/выход через /afk.
+  enabled: true
+  # Сообщение игроку при ручном входе в AFK.
+  enter_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <yellow>Вы вошли в AFK</yellow><gray><if_reason> (</gray><white><reason></white><gray>)</if_reason>.</gray>"
+  # Бродкаст сообщение о ручном входе в AFK (с возможной причиной).
+  enter_broadcast_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <white><player></white> вошёл в <yellow>AFK</yellow><gray><if_reason> (</gray><white><reason></white><gray>)</if_reason>.</gray>"
+  # Звук при ручном входе.
+  enter_sound: "minecraft:ui.button.click"
+  # Сообщение игроку при ручном выходе из AFK.
+  exit_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <green>Вы вышли из AFK.</green>"
+  # Звук при ручном выходе.
+  exit_sound: "minecraft:entity.player.levelup"
+  # Сообщение об отказе входа в AFK (анти-абуз: бой, падение и т.д.).
+  declined_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <red>Невозможно войти в AFK сейчас: небезопасно (бой/падение).</red>"
+  # Звук при отказе.
+  declined_sound: "minecraft:entity.villager.no"
+
+limits:
+  # Глобальный лимит продолжительности AFK. По истечении — действие ниже.
+  enabled: true
+  # Максимальная длительность AFK в секундах (например, 20 минут = 1200).
+  seconds: 1200
+  # Текст кика/выхода по лимиту (Adventure-формат).
+  kick_message: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <red>Превышено время AFK.</red> <gray>Вы были отключены.</gray>"
+  warning:
+    # Включить предупреждения о скором окончании AFK.
+    enabled: true
+    # Моменты предупреждений (в секундах до выхода/кика).
+    seconds: [10, 30, 60, 90]
+    # Звук предупреждения.
+    sound: "minecraft:block.note_block.pling"
+    # Текст предупреждения в Action Bar (Adventure-формат). Можно использовать <seconds>.
+    text: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <yellow>AFK завершится через</yellow> <white><seconds></white> <yellow>сек.</yellow>"
+
+# Набор предотвращаемых эффектов/событий, пока игрок AFK.
+# Возможные значения (на текущей версии):
+#   explosions, fire, entity_damage, projectile_damage, hunger, fall, mob_target, collision
+prevents: [explosions,fire,entity_damage,projectile_damage,hunger,fall,mob_target,collision]
+
+effects:
+  # Режим отсутствия коллизии/толканий (noclip/без столкновений).
+  noclip:
+    enabled: true
+  # Частицы вокруг игрока во время AFK.
+  particles:
+    enabled: true
+    # Тип частицы
+    type: "minecraft:happy_villager"
+  # AFK-метка (курсив) у ника/таблиста.
+  nickname:
+    enabled: true
+
+# Триггеры выхода из AFK:
+# - combat: метка боя/получение/нанесение урона и т.п.
+# - move: движение (с учётом порога).
+# - chat: сообщения в чат.
+# - command: выполнение любой команды.
+exit_triggers: [combat, move, chat, command]
+
+system:
+  messages:
+    # Сообщение об успешной перезагрузке плагина.
+    reloaded: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <green>Конфигурация перезагружена.</green>"
+    # Сообщение об ошибочном использовании команды /moafks.
+    incorrect: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <red>Неверная команда.</red> <gray>Используйте </gray><white>/moafks reload</white><gray>.</gray>"
+    # Сообщение о недостатке прав.
+    restricted: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <red>Недостаточно прав.</red>"
+    # Сообщение, что выход из AFK был небезопасным — телепорт на ближайший безопасный блок.
+    unsafe: "<gray>[</gray><gold>AFK</gold><gray>]</gray> <yellow>Выход был небезопасным — выполнен телепорт на ближайший безопасный блок.</yellow>"
