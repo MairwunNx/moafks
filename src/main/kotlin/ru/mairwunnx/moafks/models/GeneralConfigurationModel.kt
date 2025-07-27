@@ -9,8 +9,18 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Particle
 import org.bukkit.Sound
-import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.*
-import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.*
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.CHAT
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.COMBAT
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.COMMAND
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.MOVE
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.COLLISION
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.ENTITY_DAMAGE
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.EXPLOSIONS
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.FALL
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.FIRE
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.HUNGER
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.MOB_TARGET
+import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.PROJECTILE_DAMAGE
 import ru.mairwunnx.moafks.serializers.ComponentSerializer
 import ru.mairwunnx.moafks.serializers.ParticleSerializer
 import ru.mairwunnx.moafks.serializers.SoundSerializer
@@ -18,7 +28,7 @@ import ru.mairwunnx.moafks.serializers.SoundSerializer
 private val mm = MiniMessage.miniMessage()
 private fun c(s: String): Component = mm.deserialize(s)
 
-@Serializable data class GeneralConfigurationModel(
+@Serializable class GeneralConfigurationModel(
   @SerialName("enabled") val enabled: Boolean,
   @SerialName("debug") val debug: Boolean,
   @SerialName("auto") val auto: AutoSection,
@@ -29,7 +39,7 @@ private fun c(s: String): Component = mm.deserialize(s)
   @SerialName("exit_triggers") val exitTriggers: List<ExitTrigger>,
   @SerialName("system") val system: SystemSection
 ) {
-  @Serializable data class AutoSection(
+  @Serializable class AutoSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("seconds") val seconds: Int,
     @SerialName("enter_message") val enterMessage: Component,
@@ -39,7 +49,7 @@ private fun c(s: String): Component = mm.deserialize(s)
     @SerialName("exit_sound") val exitSound: Sound
   )
 
-  @Serializable data class ManualSection(
+  @Serializable class ManualSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("enter_message") val enterMessage: Component,
     @SerialName("enter_broadcast_message") val enterBroadcastMessage: Component,
@@ -50,38 +60,38 @@ private fun c(s: String): Component = mm.deserialize(s)
     @SerialName("declined_sound") val declinedSound: Sound
   )
 
-  @Serializable data class LimitsSection(
+  @Serializable class LimitsSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("seconds") val seconds: Int,
     @SerialName("kick_message") val kickMessage: Component,
     @SerialName("warning") val warning: WarningSection
   )
 
-  @Serializable data class WarningSection(
+  @Serializable class WarningSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("seconds") val seconds: List<Int>,
     @SerialName("sound") val sound: Sound,
     @SerialName("text") val text: Component
   )
 
-  @Serializable data class EffectsSection(
+  @Serializable class EffectsSection(
     @SerialName("noclip") val noclip: NoclipSection,
     @SerialName("particles") val particles: ParticlesSection,
     @SerialName("nickname") val nickname: NicknameSection
   )
 
-  @Serializable data class NoclipSection(@SerialName("enabled") val enabled: Boolean)
+  @Serializable class NoclipSection(@SerialName("enabled") val enabled: Boolean)
 
-  @Serializable data class ParticlesSection(
+  @Serializable class ParticlesSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("type") val type: Particle
   )
 
-  @Serializable data class NicknameSection(@SerialName("enabled") val enabled: Boolean)
+  @Serializable class NicknameSection(@SerialName("enabled") val enabled: Boolean)
 
-  @Serializable data class SystemSection(@SerialName("messages") val messages: SystemMessages)
+  @Serializable class SystemSection(@SerialName("messages") val messages: SystemMessages)
 
-  @Serializable data class SystemMessages(
+  @Serializable class SystemMessages(
     @SerialName("reloaded") val reloaded: Component,
     @SerialName("incorrect") val incorrect: Component,
     @SerialName("restricted") val restricted: Component,
