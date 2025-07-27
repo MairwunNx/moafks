@@ -35,10 +35,14 @@ auto:
 manual:
   # Разрешить ручной вход/выход через /afk.
   enabled: true
-  # Сообщение игроку при ручном входе в AFK.
-  enter_message: "<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера<if_reason> по причине: <white><reason></white></if_reason>. Хорошего отдыха!</aqua>"
-  # Бродкаст сообщение о ручном входе в AFK (с возможной причиной).
-  enter_broadcast_message: "<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера<if_reason> по причине: <white><reason></white></if_reason></aqua>"
+  # Сообщение игроку при ручном входе в AFK без причины.
+  enter_message: "<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера. Хорошего отдыха!</aqua>"
+  # Сообщение игроку при ручном входе в AFK с причиной.
+  enter_message_reasoned: "<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow><aqua>. Хорошего отдыха!</aqua>"
+  # Бродкаст сообщение о ручном входе в AFK без причины.
+  enter_broadcast_message: "<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua>"
+  # Бродкаст сообщение о ручном входе в AFK с причиной.
+  enter_broadcast_message_reasoned: "<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow>"
   # Звук при ручном входе.
   enter_sound: "minecraft:ui.button.click"
   # Сообщение игроку при ручном выходе из AFK.
