@@ -52,7 +52,9 @@ private fun c(s: String): Component = mm.deserialize(s)
   @Serializable class ManualSection(
     @SerialName("enabled") val enabled: Boolean,
     @SerialName("enter_message") val enterMessage: Component,
+    @SerialName("enter_message_reasoned") val enterMessageReasoned: Component,
     @SerialName("enter_broadcast_message") val enterBroadcastMessage: Component,
+    @SerialName("enter_broadcast_message_reasoned") val enterBroadcastMessageReasoned: Component,
     @SerialName("enter_sound") val enterSound: Sound,
     @SerialName("exit_message") val exitMessage: Component,
     @SerialName("exit_sound") val exitSound: Sound,
@@ -131,12 +133,14 @@ private fun c(s: String): Component = mm.deserialize(s)
       ),
       manual = ManualSection(
         enabled = true,
-        enterMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <yellow>Вы вошли в AFK</yellow><gray><if_reason> (</gray><white><reason></white><gray>)</if_reason>.</gray>"),
-        enterBroadcastMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <white><player></white> вошёл в <yellow>AFK</yellow><gray><if_reason> (</gray><white><reason></white><gray>)</if_reason>.</gray>"),
+        enterMessage = c("<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера. Хорошего отдыха!</aqua>"),
+        enterMessageReasoned = c("<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow><aqua>. Хорошего отдыха!</aqua>"),
+        enterBroadcastMessage = c("<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua>"),
+        enterBroadcastMessageReasoned = c("<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow>"),
         enterSound = Sound.UI_BUTTON_CLICK,
-        exitMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <green>Вы вышли из AFK.</green>"),
+        exitMessage = c("<green>«</green> <aqua>С возвращением в игру!</aqua> <green>Надеюсь, ты хорошо отдохнул и готов продолжить приключения</green>"),
         exitSound = Sound.ENTITY_PLAYER_LEVELUP,
-        declinedMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <red>Невозможно войти в AFK сейчас: небезопасно (бой/падение).</red>"),
+        declinedMessage = c("<red>×</red> <yellow>Сейчас нельзя отойти от компьютера!</yellow> <red>Слишком опасная ситуация</red> <dark_gray>(активный бой или падение)</dark_gray>"),
         declinedSound = Sound.ENTITY_VILLAGER_NO
       ),
       limits = LimitsSection(
