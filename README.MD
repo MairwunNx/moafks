@@ -88,7 +88,7 @@ cd moafks
 ./gradlew build
 ```
 
-Готовый JAR: `build/libs/moafks-1.0.0-all.jar`
+Готовый JAR: `build/libs/moafks-1.0.1-all.jar`
 
 ## Стек
 
