@@ -19,6 +19,7 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
   private val lastActivity = ConcurrentHashMap<UUID, Long>()
   private val warningTasks = ConcurrentHashMap<UUID, MutableSet<Int>>()
   private val lastCombatAt = ConcurrentHashMap<UUID, Long>()
+  private val lastAutoAfkAttempt = ConcurrentHashMap<UUID, Long>()
   private val combatCooldownMs = 15_000L // todo: вынести в конфиг.
   private val mm = MiniMessage.miniMessage()
 
@@ -53,8 +54,17 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
 
     applyAfkProtections(player)
 
-    val personalMessage = processMessagePlaceholders(config.manual.enterMessage, player, reason, 0)
-    val broadcastMessage = processMessagePlaceholders(config.manual.enterBroadcastMessage, player, reason, 0)
+    val personalMessage = if (reason != null && reason.isNotBlank()) {
+      processMessagePlaceholders(config.manual.enterMessageReasoned, player, reason, 0)
+    } else {
+      processMessagePlaceholders(config.manual.enterMessage, player, null, 0)
+    }
+    
+    val broadcastMessage = if (reason != null && reason.isNotBlank()) {
+      processMessagePlaceholders(config.manual.enterBroadcastMessageReasoned, player, reason, 0)
+    } else {
+      processMessagePlaceholders(config.manual.enterBroadcastMessage, player, null, 0)
+    }
 
     player.sendMessage(personalMessage)
     player.playSound(player.location, config.manual.enterSound, 1.0f, 1.0f)
@@ -71,7 +81,10 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
     val config = plugin.configuration[GeneralConfigurationModel::class.java]
 
     if (!config.auto.enabled) return
-    if (isAfk(player)) return
+    if (isAfk(player)) {
+      plugin.logger.debug { "Player ${player.name} is already AFK, skipping auto AFK" }
+      return
+    }
 
     plugin.logger.info { "🔄 Player ${player.name} entering auto AFK" }
 
@@ -176,18 +189,10 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
   private fun processMessagePlaceholders(message: Component, player: Player, reason: String?, seconds: Int): Component {
     val miniMessageText = mm.serialize(message)
 
-    var processed = miniMessageText
+    val processed = miniMessageText
       .replace("<player>", player.name)
       .replace("<seconds>", seconds.toString())
-
-    processed = if (reason != null) {
-      processed
-        .replace("<reason>", reason)
-        .replace("<if_reason>", "")
-        .replace("</if_reason>", "")
-    } else {
-      processed.replace(IF_REASON_RX, "")
-    }
+      .replace("<reason>", reason ?: "")
 
     return mm.deserialize(processed)
   }
@@ -203,7 +208,12 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
       Bukkit.getOnlinePlayers().forEach { p ->
         if (!isAfk(p)) {
           val last = lastActivity[p.uniqueId] ?: now
-          if (now - last >= thresholdMs) enterAuto(p)
+          if (now - last >= thresholdMs) {
+            if (!isAfk(p)) {
+              plugin.logger.debug { "Player ${p.name} inactive for ${(now - last) / 1000}s, entering auto AFK" }
+              enterAuto(p)
+            }
+          }
         }
       }
     }
@@ -253,8 +263,6 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
   }
 
   private companion object {
-    val IF_REASON_RX = Regex("<if_reason>.*?</if_reason>")
-
     const val TASK_AUTO_AFK = "auto-afk"
     const val TASK_WARNINGS = "afk-warnings"
   }
