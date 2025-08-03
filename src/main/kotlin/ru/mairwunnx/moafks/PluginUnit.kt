@@ -66,4 +66,33 @@ class PluginUnit : JavaPlugin() {
 
     logger.info { "✅ Plugin Mo'Afks unloaded" }
   }
+
+  fun reload() {
+    logger.info { "🔄 Reloading Mo'Afks plugin" }
+
+    if (::scheduler.isInitialized) scheduler.close()
+    if (::configuration.isInitialized) configuration.close()
+    if (::afk.isInitialized) afk.close()
+    if (::effects.isInitialized) effects.close()
+    if (::players.isInitialized) players.close()
+    if (::location.isInitialized) location.close()
+
+    scheduler = PaperScheduler(this)
+
+    configuration = ConfigurationManager(this)
+    runBlocking { configuration.initialize() }
+
+    if (!configuration[GeneralConfigurationModel::class.java].enabled) {
+      logger.info { "⛔️ Mo'Afks is disabled in the config. Plugin will not be enabled." }
+      onDisable()
+      return
+    }
+
+    afk = AwayFromKeyboardManager(this)
+    effects = EffectsManager(this)
+    players = PlayerEventManager(this)
+    location = LocationManager(this)
+
+    logger.info { "✅ Plugin Mo'Afks reloaded" }
+  }
 }
