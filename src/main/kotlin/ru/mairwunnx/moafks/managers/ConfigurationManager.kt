@@ -78,7 +78,7 @@ class ConfigurationManager(val plugin: PluginUnit) : Closeable {
     configurations[type.kotlin] as? T
       ?: run {
         plugin.logger.error(
-          { "❌ No configuration ${type.simpleName} resolved at this moment!" },
+          { "No configuration ${type.simpleName} resolved at this moment!" },
           kotlin.NullPointerException()
         )
         throw kotlin.IllegalStateException("Configuration ${type.simpleName} not loaded")
@@ -89,7 +89,7 @@ class ConfigurationManager(val plugin: PluginUnit) : Closeable {
     configurations[type] as? T
       ?: run {
         plugin.logger.error(
-          { "❌ No configuration ${type.simpleName} resolved at this moment!" },
+          { "No configuration ${type.simpleName} resolved at this moment!" },
           kotlin.NullPointerException()
         )
         throw kotlin.IllegalStateException("Configuration ${type.simpleName} not loaded")
