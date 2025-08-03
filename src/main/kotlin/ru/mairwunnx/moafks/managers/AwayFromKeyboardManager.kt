@@ -127,22 +127,22 @@ class AwayFromKeyboardManager(private val plugin: PluginUnit) : Closeable {
 
     if (!silent) {
       val exitMessage = if (afkState.manual) {
-        config.manual.exitMessage.render("player" to player, "reason" to afkState.reason)
+        config.manual.exitMessage.render("player" to player)
       } else {
-        config.auto.exitMessage.render("player" to player, "reason" to afkState.reason)
+        config.auto.exitMessage.render("player" to player)
       }
-      
+
       val exitBroadcastMessage = if (afkState.manual) {
-        config.manual.exitBroadcastMessage.render("player" to player, "reason" to afkState.reason)
+        config.manual.exitBroadcastMessage.render("player" to player)
       } else {
-        config.auto.exitBroadcastMessage.render("player" to player, "reason" to afkState.reason)
+        config.auto.exitBroadcastMessage.render("player" to player)
       }
-      
+
       val exitSound = if (afkState.manual) config.manual.exitSound else config.auto.exitSound
 
       player.sendMessage(exitMessage)
       player.playSound(player.location, exitSound, 1.0f, 1.0f)
-      
+
       Bukkit.getOnlinePlayers().forEach { p ->
         if (p != player) p.sendMessage(exitBroadcastMessage)
       }
