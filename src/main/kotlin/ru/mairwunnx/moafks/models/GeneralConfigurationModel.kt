@@ -6,7 +6,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Particle
 import org.bukkit.Sound
 import ru.mairwunnx.moafks.models.GeneralConfigurationModel.ExitTrigger.CHAT
@@ -21,12 +20,10 @@ import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.FIRE
 import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.HUNGER
 import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.MOB_TARGET
 import ru.mairwunnx.moafks.models.GeneralConfigurationModel.PreventType.PROJECTILE_DAMAGE
+import ru.mairwunnx.moafks.platform.c
 import ru.mairwunnx.moafks.serializers.ComponentSerializer
 import ru.mairwunnx.moafks.serializers.ParticleSerializer
 import ru.mairwunnx.moafks.serializers.SoundSerializer
-
-private val mm = MiniMessage.miniMessage()
-private fun c(s: String): Component = mm.deserialize(s)
 
 @Serializable class GeneralConfigurationModel(
   @SerialName("enabled") val enabled: Boolean,
@@ -46,6 +43,7 @@ private fun c(s: String): Component = mm.deserialize(s)
     @SerialName("enter_broadcast_message") val enterBroadcastMessage: Component,
     @SerialName("enter_sound") val enterSound: Sound,
     @SerialName("exit_message") val exitMessage: Component,
+    @SerialName("exit_broadcast_message") val exitBroadcastMessage: Component,
     @SerialName("exit_sound") val exitSound: Sound
   )
 
@@ -57,6 +55,7 @@ private fun c(s: String): Component = mm.deserialize(s)
     @SerialName("enter_broadcast_message_reasoned") val enterBroadcastMessageReasoned: Component,
     @SerialName("enter_sound") val enterSound: Sound,
     @SerialName("exit_message") val exitMessage: Component,
+    @SerialName("exit_broadcast_message") val exitBroadcastMessage: Component,
     @SerialName("exit_sound") val exitSound: Sound,
     @SerialName("declined_message") val declinedMessage: Component,
     @SerialName("declined_sound") val declinedSound: Sound
@@ -77,12 +76,9 @@ private fun c(s: String): Component = mm.deserialize(s)
   )
 
   @Serializable class EffectsSection(
-    @SerialName("noclip") val noclip: NoclipSection,
     @SerialName("particles") val particles: ParticlesSection,
     @SerialName("nickname") val nickname: NicknameSection
   )
-
-  @Serializable class NoclipSection(@SerialName("enabled") val enabled: Boolean)
 
   @Serializable class ParticlesSection(
     @SerialName("enabled") val enabled: Boolean,
@@ -129,6 +125,7 @@ private fun c(s: String): Component = mm.deserialize(s)
         enterBroadcastMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <white><player></white> теперь <yellow>AFK</yellow> <gray>(неактивность)</gray>."),
         enterSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
         exitMessage = c("<gray>[</gray><gold>AFK</gold><gray>]</gray> <green>Вы автоматически вышли из AFK.</green>"),
+        exitBroadcastMessage = c("<green>«</green> <white><player></white> <aqua>вернулся в игру</aqua> <dark_gray>(активность восстановлена)</dark_gray>"),
         exitSound = Sound.ENTITY_PLAYER_LEVELUP
       ),
       manual = ManualSection(
@@ -139,6 +136,7 @@ private fun c(s: String): Component = mm.deserialize(s)
         enterBroadcastMessageReasoned = c("<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow>"),
         enterSound = Sound.UI_BUTTON_CLICK,
         exitMessage = c("<green>«</green> <aqua>С возвращением в игру!</aqua> <green>Надеюсь, ты хорошо отдохнул и готов продолжить приключения</green>"),
+        exitBroadcastMessage = c("<green>«</green> <white><player></white> <aqua>вернулся к игре после отдыха</aqua>"),
         exitSound = Sound.ENTITY_PLAYER_LEVELUP,
         declinedMessage = c("<red>×</red> <yellow>Сейчас нельзя отойти от компьютера!</yellow> <red>Слишком опасная ситуация</red> <dark_gray>(активный бой или падение)</dark_gray>"),
         declinedSound = Sound.ENTITY_VILLAGER_NO
@@ -156,7 +154,6 @@ private fun c(s: String): Component = mm.deserialize(s)
       ),
       prevents = listOf(EXPLOSIONS, FIRE, ENTITY_DAMAGE, PROJECTILE_DAMAGE, HUNGER, FALL, MOB_TARGET, COLLISION),
       effects = EffectsSection(
-        noclip = NoclipSection(enabled = true),
         particles = ParticlesSection(enabled = true, type = Particle.HAPPY_VILLAGER),
         nickname = NicknameSection(enabled = true)
       ),
