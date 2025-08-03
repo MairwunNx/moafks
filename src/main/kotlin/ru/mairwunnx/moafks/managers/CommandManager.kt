@@ -54,16 +54,12 @@ class CommandManager(private val plugin: PluginUnit) : Closeable {
             sender.sendMessage(cfg.system.messages.restricted)
             return
           }
-          plugin.logger.info { "🔄 Reloading Mo'Afks plugin" }
           runCatching {
-            plugin.onDisable()
-            plugin.onEnable()
+            plugin.reload()
           }.onSuccess {
-            plugin.logger.info { "✅ Mo'Afks reloaded" }
             sender.sendMessage(cfg.system.messages.reloaded)
           }.onFailure {
             plugin.logger.error({ "Reload failed" }, it)
-            // Можно отдать человеческое сообщение об ошибке (по желанию)
           }
         }
 
