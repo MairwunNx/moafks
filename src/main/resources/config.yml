@@ -29,6 +29,8 @@ auto:
   enter_sound: "minecraft:entity.experience_orb.pickup"
   # Сообщение игроку о выходе из AFK автоматически (например, при движении).
   exit_message: "<green>«</green> <aqua>Добро пожаловать обратно в игру!</aqua> <green>Рад видеть, что ты снова активен и готов к приключениям</green>"
+  # Broadcast сообщение о выходе игрока из автоматического AFK.
+  exit_broadcast_message: "<green>«</green> <white><player></white> <aqua>вернулся в игру</aqua> <dark_gray>(активность восстановлена)</dark_gray>"
   # Звук при авто-выходе из AFK.
   exit_sound: "minecraft:entity.player.levelup"
 
@@ -47,6 +49,8 @@ manual:
   enter_sound: "minecraft:ui.button.click"
   # Сообщение игроку при ручном выходе из AFK.
   exit_message: "<green>«</green> <aqua>С возвращением в игру!</aqua> <green>Надеюсь, ты хорошо отдохнул и готов продолжить приключения</green>"
+  # Broadcast сообщение о выходе игрока из ручного AFK.
+  exit_broadcast_message: "<green>«</green> <white><player></white> <aqua>вернулся к игре после отдыха</aqua>"
   # Звук при ручном выходе.
   exit_sound: "minecraft:entity.player.levelup"
   # Сообщение об отказе входа в AFK (анти-абуз: бой, падение и т.д.).
