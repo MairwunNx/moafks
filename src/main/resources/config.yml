@@ -77,9 +77,6 @@ limits:
 prevents: [explosions,fire,entity_damage,projectile_damage,hunger,fall,mob_target,collision]
 
 effects:
-  # Режим отсутствия коллизии/толканий (noclip/без столкновений).
-  noclip:
-    enabled: true
   # Частицы вокруг игрока во время AFK.
   particles:
     enabled: true
