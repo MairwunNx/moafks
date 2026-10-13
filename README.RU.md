@@ -20,7 +20,7 @@
 
 ## Попробовать вживую
 
-Moonlands — мой сервер со сложным выживанием для друзей, на нём работают мои плагины. Заходите поиграть.
+Mo’Afks работает на Moonlands — моём сервере со сложным выживанием для друзей. Заходите, введите `/afk` и посмотрите, от чего он защищает.
 
 [![Играйте на Moonlands: чистая ваниль, сложные мобы, ИИ, приваты. ru.minecraft.mairwunnx.com](https://raw.githubusercontent.com/MairwunNx/moafks/master/media/og-adv-image.ru.png)](https://minecraft.mairwunnx.com)
 

@@ -20,7 +20,7 @@
 
 ## Try it live
 
-Moonlands is my hard survival server with friends, where my plugins run. Come in and play.
+Mo’Afks runs on Moonlands, my hard survival server with friends. Come in, type `/afk`, and see what it keeps away.
 
 [![Play on Moonlands: pure vanilla, hard mobs, AI, claims. minecraft.mairwunnx.com](https://raw.githubusercontent.com/MairwunNx/moafks/master/media/og-adv-image.png)](https://minecraft.mairwunnx.com)
 
