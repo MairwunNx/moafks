@@ -2,6 +2,7 @@ plugins {
   kotlin("jvm") version "2.4.21"
   kotlin("plugin.serialization") version "2.4.21"
   id("com.gradleup.shadow") version "9.6.1"
+  id("com.modrinth.minotaur") version "2.10.0"
 }
 
 group = "ru.mairwunnx"
@@ -56,3 +57,23 @@ tasks.shadowJar {
 
 tasks.jar { enabled = false }
 tasks.assemble { dependsOn(tasks.shadowJar) }
+
+// `./gradlew modrinth` with MODRINTH_TOKEN set; the release workflow runs it when asked to.
+modrinth {
+  token = providers.environmentVariable("MODRINTH_TOKEN")
+  projectId = "moafks"
+  versionNumber = project.version.toString()
+  versionName = "Mo’Afks ${project.version}"
+  versionType = "release"
+  uploadFile.set(tasks.shadowJar)
+  gameVersions.addAll("26.3")
+  loaders.addAll("paper", "purpur")
+  // The release workflow writes the notes to a file; a local upload falls back to the GitHub release.
+  changelog = (findProperty("changelogFile") as String?)?.let { file(it).readText() }
+    ?: "https://github.com/MairwunNx/moafks/releases/tag/v${project.version}"
+  syncBodyFrom = file("MODRINTH.md").readText()
+}
+
+tasks.modrinth {
+  dependsOn(tasks.modrinthSyncBody)
+}
