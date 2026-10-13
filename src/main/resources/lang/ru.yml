@@ -1,0 +1,49 @@
+# Русский. Формат MiniMessage: https://docs.advntr.dev/minimessage/format
+# Подстановки: <player>, <display_name>, <reason>, <time> и <papi:name> для %name% из PlaceholderAPI.
+# Пустая строка отключает сообщение.
+
+# Бездействие: самому игроку, затем всем остальным.
+auto_enter: "<color:#B388FF>»</color> <gray>Вы в режиме AFK, вам ничто не навредит. Чтобы вернуться, двигайтесь или введите</gray> <white>/afk</white><gray>.</gray>"
+auto_enter_broadcast: "<color:#B388FF>»</color> <white><player></white> <gray>отошёл от клавиатуры.</gray>"
+
+# /afk и /afk <причина>: самому игроку, затем всем остальным.
+manual_enter: "<color:#B388FF>»</color> <gray>Вы в режиме AFK. Хорошего отдыха! Когда вернётесь, двигайтесь или введите</gray> <white>/afk</white><gray>.</gray>"
+manual_enter_reason: "<color:#B388FF>»</color> <gray>Вы в режиме AFK:</gray> <white><reason></white><gray>. Когда вернётесь, двигайтесь или введите</gray> <white>/afk</white><gray>.</gray>"
+manual_enter_broadcast: "<color:#B388FF>»</color> <white><player></white> <gray>отошёл от клавиатуры.</gray>"
+manual_enter_broadcast_reason: "<color:#B388FF>»</color> <white><player></white> <gray>отошёл:</gray> <white><reason></white>"
+
+# Возвращение; <time> — сколько игрок отсутствовал.
+exit: "<color:#69F0AE>«</color> <gray>С возвращением! Вас не было</gray> <white><time></white><gray>.</gray>"
+exit_broadcast: "<color:#69F0AE>«</color> <white><player></white> <gray>вернулся, его не было</gray> <white><time></white><gray>.</gray>"
+
+# Почему /afk сейчас не работает.
+declined_combat: "<red>×</red> <gray>Не посреди боя. Подождите несколько секунд после последнего удара.</gray>"
+declined_falling: "<red>×</red> <gray>Не во время падения. Сначала приземлитесь.</gray>"
+declined_burning: "<red>×</red> <gray>Не когда вы горите или замерзаете.</gray>"
+declined_liquid: "<red>×</red> <gray>Не в воде и не в лаве. Сначала выйдите на сушу.</gray>"
+declined_targeted: "<red>×</red> <gray>Не когда за вами гонится моб.</gray>"
+manual_disabled: "<red>×</red> <gray>Команда /afk на этом сервере выключена.</gray>"
+
+# Строка над хотбаром перед киком и сам кик.
+limit_warning: "<yellow>⌛</yellow> <gray>Вы давно в AFK. Кик через</gray> <white><time></white><gray> — пошевелитесь, чтобы остаться.</gray>"
+limit_kick: "<gray>Вы слишком долго были в AFK.</gray>"
+
+moved_to_safety: "<yellow>!</yellow> <gray>Там, где вы стояли, было опасно, поэтому вас перенесло на безопасное место рядом.</gray>"
+void_rescue: "<yellow>!</yellow> <gray>Вы упали в пустоту, пока были в AFK, и вас вернуло обратно.</gray>"
+
+# <time> в других сообщениях.
+seconds: "<seconds> с"
+minutes: "<minutes> мин"
+hours: "<hours> ч <minutes> мин"
+
+# /moafks list
+list: "<gray>В AFK (<count>):</gray> <players>"
+list_entry: "<white><player></white> <dark_gray>(<time>)</dark_gray>"
+list_empty: "<gray>Никто не в AFK.</gray>"
+
+reloaded: "<green>Mo’Afks перезагружен.</green>"
+reload_failed: "<red>Mo’Afks перезагружен с ошибками.</red> <gray>Загляните в лог сервера.</gray>"
+usage: "<gray>Команды:</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white> <gray>и</gray> <white>/moafks locale [игрок]</white>"
+locale_info: "<white><player></white><gray>: язык</gray> <white><language></white><gray>, страна</gray> <white><country></white><gray>, язык игры</gray> <white><client></white>"
+player_not_found: "<red>Игрока <player> нет в сети.</red>"
+players_only: "<red>Это может сделать только игрок.</red>"

@@ -1,109 +1,119 @@
 ###############################################################################
-#                        Mo’Afks Configuration File                           #
-#                                                                             #
-#  - Плагин защищает игрока в состоянии AFK и не даёт абузить механику.       #
-#  - Блокирует коллизию/урон/голод, может ставить частицы, метку в нике.      #
-#  - Имеет авто-детекцию AFK и лимиты по времени, предупреждения и звуки.     #
-#                                                                             #
-#  Формат сообщений: Adventure/MiniMessage.                                   #
-#  Для звуков используйте namespaced ключи звуков (например,                  #
-#  'minecraft:entity.player.levelup').                                        #
+#                           Mo’Afks configuration                             #
 ###############################################################################
+# A player goes AFK with /afk or after standing idle. While AFK, nothing hurts
+# or moves them, and the protection can't be used to gain anything. Messages
+# live in lang/<language>.yml and use MiniMessage. Every key here has a
+# default, so you can delete the ones you don't change. /moafks reload applies
+# changes without a restart.
 
-# Включает/выключает плагин целиком.
-enabled: true
+enabled: true   # false turns the plugin off; nobody goes AFK.
+debug: false    # true logs who goes AFK and why, and how each language was picked.
 
-# Подробное логирование (в том числе отладочные сообщения).
-debug: false
+locales:
+  # Players nothing else matches, and the console, get this language.
+  default: en
+  # Where a player's language comes from, tried in order:
+  #   ip     — the country of their IP address, through the lists below;
+  #   client — the language set in their game, when a lang/ file matches it.
+  sources: [ ip, client ]
+  # Language → the ISO 3166 country codes that get it. Add a lang/it.yml and an
+  # “it: [ IT, SM, VA ]” line to add Italian. Players behind a proxy or relay show
+  # up with its address, so they get the relay's country.
+  countries:
+    ru: [ RU, BY, KZ, KG, TJ, UZ, AM, AZ, MD, GE, TM ]
+    es: [ ES, MX, AR, CO, CL, PE, VE, EC, GT, CU, BO, DO, HN, PY, SV, NI, CR, PA, UY, PR, GQ ]
+    pt: [ BR, PT, AO, MZ, CV, GW, ST, TL ]
+    de: [ DE, AT, CH, LI, LU ]
+
+geoip:
+  # The country database: DB-IP's free “IP to Country Lite”, CC BY 4.0, about 4 MB.
+  # The plugin downloads it into geoip/ and refreshes it once it's older than
+  # refresh_days. Lookups happen on your server; no address leaves it.
+  enabled: true
+  url: "https://download.db-ip.com/free/dbip-country-lite-{year}-{month}.mmdb.gz"
+  refresh_days: 30
 
 auto:
-  # Автоматический вход в AFK по бездействию.
-  enabled: true
-  # Секунд бездействия до авто-входа в AFK.
-  seconds: 60
-  # Сообщение игроку о входе в AFK автоматически.
-  enter_message: "<light_purple>»</light_purple> <aqua>Похоже, ты задремал от бездействия!</aqua> <dark_gray>Пошевелись или напиши</dark_gray> <white>/afk</white><dark_gray>, чтобы проснуться и вернуться в игру</dark_gray>"
-  # Сообщение для всех о том, что игрок вошел в AFK автоматически.
-  enter_broadcast_message: "<light_purple>»</light_purple> <white><player></white> <aqua>отошёл от клавиатуры</aqua> <dark_gray>(автоматически из-за бездействия)</dark_gray>"
-  # Звук при авто-входе в AFK (namespaced ключ звука).
-  enter_sound: "minecraft:entity.experience_orb.pickup"
-  # Сообщение игроку о выходе из AFK автоматически (например, при движении).
-  exit_message: "<green>«</green> <aqua>Добро пожаловать обратно в игру!</aqua> <green>Рад видеть, что ты снова активен и готов к приключениям</green>"
-  # Broadcast сообщение о выходе игрока из автоматического AFK.
-  exit_broadcast_message: "<green>«</green> <white><player></white> <aqua>вернулся в игру</aqua> <dark_gray>(активность восстановлена)</dark_gray>"
-  # Звук при авто-выходе из AFK.
-  exit_sound: "minecraft:entity.player.levelup"
+  enabled: true   # Idle players go AFK on their own.
+  seconds: 300    # Seconds without activity (see exit_triggers) before they do.
 
 manual:
-  # Разрешить ручной вход/выход через /afk.
-  enabled: true
-  # Сообщение игроку при ручном входе в AFK без причины.
-  enter_message: "<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера. Хорошего отдыха!</aqua>"
-  # Сообщение игроку при ручном входе в AFK с причиной.
-  enter_message_reasoned: "<light_purple>»</light_purple> <aqua>Ты решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow><aqua>. Хорошего отдыха!</aqua>"
-  # Бродкаст сообщение о ручном входе в AFK без причины.
-  enter_broadcast_message: "<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua>"
-  # Бродкаст сообщение о ручном входе в AFK с причиной.
-  enter_broadcast_message_reasoned: "<light_purple>»</light_purple> <white><player></white> <aqua>решил отойти от компьютера</aqua> <dark_gray>по причине:</dark_gray> <yellow><reason></yellow>"
-  # Звук при ручном входе.
-  enter_sound: "minecraft:ui.button.click"
-  # Сообщение игроку при ручном выходе из AFK.
-  exit_message: "<green>«</green> <aqua>С возвращением в игру!</aqua> <green>Надеюсь, ты хорошо отдохнул и готов продолжить приключения</green>"
-  # Broadcast сообщение о выходе игрока из ручного AFK.
-  exit_broadcast_message: "<green>«</green> <white><player></white> <aqua>вернулся к игре после отдыха</aqua>"
-  # Звук при ручном выходе.
-  exit_sound: "minecraft:entity.player.levelup"
-  # Сообщение об отказе входа в AFK (анти-абуз: бой, падение и т.д.).
-  declined_message: "<red>×</red> <yellow>Сейчас нельзя отойти от компьютера!</yellow> <red>Слишком опасная ситуация</red> <dark_gray>(активный бой или падение)</dark_gray>"
-  # Звук при отказе.
-  declined_sound: "minecraft:entity.villager.no"
+  enabled: true      # Players may go AFK with /afk [reason].
+  reason_length: 64  # Longer reasons get cut.
 
 limits:
-  # Глобальный лимит продолжительности AFK. По истечении — действие ниже.
-  enabled: true
-  # Максимальная длительность AFK в секундах (например, 20 минут = 1200).
-  seconds: 1200
-  # Текст кика/выхода по лимиту (Adventure-формат).
-  kick_message: "<red>×</red> <yellow>Слишком долго отсутствовал!</yellow> <red>Время AFK истекло</red>"
+  enabled: true   # Kicks players who stay AFK too long.
+  seconds: 1200   # How long they may stay AFK: 20 minutes.
   warning:
-    # Включить предупреждения о скором окончании AFK.
     enabled: true
-    # Моменты предупреждений (в секундах до выхода/кика).
-    seconds: [1, 2, 3, 4, 5, 10, 30, 60, 90]
-    # Звук предупреждения.
-    sound: "minecraft:block.note_block.pling"
-    # Текст предупреждения в Action Bar (Adventure-формат). Можно использовать <seconds>.
-    text: "<yellow>!</yellow> <aqua>Время AFK заканчивается через</aqua> <white><seconds></white> <aqua>секунд!</aqua>"
+    # Seconds before the kick at which the action bar warns them.
+    seconds: [ 60, 30, 10, 5, 4, 3, 2, 1 ]
 
-# Набор предотвращаемых эффектов/событий, пока игрок AFK.
-# Возможные значения (на текущей версии):
-#   explosions, fire, entity_damage, projectile_damage, hunger, fall, mob_target, collision
-prevents: [explosions,fire,entity_damage,projectile_damage,hunger,fall,mob_target,collision]
+# AFK players don't count when the server checks whether everyone sleeps, so
+# one friend away from the keyboard doesn't keep the night going.
+sleep_ignored: true
+
+# What AFK players are shielded from.
+protection:
+  damage: true        # Every kind of damage but /kill. Air doesn't run out under water.
+  void: true          # Falling into the void takes them back to where they went AFK.
+  knockback: true     # Hits, explosions, and wind charges don't push them.
+  collision: true     # Mobs and players walk through them.
+  projectiles: true   # Arrows, snowballs, ender pearls, and fishing hooks fly through them.
+  effects: true       # Harmful potion effects don't stick, except from commands.
+  hunger: true        # Hunger stays put, and so does health: no drain, no natural healing.
+  mobs: true          # Mobs don't target them; wardens, endermen, and zombified piglins
+                      # don't get angry at them; phantoms don't spawn for them.
+  vehicles: true      # Boats and minecarts can't pick them up or push them.
+  raids: true         # Bad Omen doesn't start a raid while they stand in a village.
+  vibrations: true    # Sculk sensors, shriekers, and wardens don't hear them.
+
+# When a player can't go AFK, so the protection can't save them from a fight.
+# Idle players in one of these spots wait to go AFK until it's over.
+anti_abuse:
+  combat_seconds: 15  # Not within this many seconds of taking damage or hitting a mob or player.
+  falling: true       # Not while falling or gliding.
+  burning: true       # Not while on fire or freezing.
+  liquids: true       # Not in water or lava.
+  targeted: true      # Not while a mob nearby is after them.
+
+# What AFK players may still collect.
+gains:
+  items: false        # Items and arrows stay on the ground.
+  experience: false   # Experience orbs wait for them.
+
+# What counts as activity. Each switch that's on ends AFK and restarts the idle
+# timer. Being pushed by water, pistons, or a minecart is never activity.
+exit_triggers:
+  move: true          # The movement keys.
+  look: true          # Turning the camera by more than look_degrees.
+  look_degrees: 30.0
+  jump: true
+  sneak: true
+  sprint: true
+  chat: true
+  command: true       # Any command but /afk and /moafks.
+  attack: true        # Hitting a mob or a player.
+  interact: true      # Clicking a block, an entity, or the air.
+  blocks: true        # Breaking or placing a block.
+  inventory: true     # Opening a container or clicking in an inventory.
+  drop: true
+  swap_hands: true
+  held_slot: true
+
+sounds:
+  enter: { enabled: true, key: "minecraft:block.amethyst_block.chime", volume: 1.0, pitch: 1.0 }
+  exit: { enabled: true, key: "minecraft:entity.experience_orb.pickup", volume: 1.0, pitch: 1.0 }
+  declined: { enabled: true, key: "minecraft:entity.villager.no", volume: 1.0, pitch: 1.0 }
+  warning: { enabled: true, key: "minecraft:block.note_block.pling", volume: 1.0, pitch: 1.0 }
 
 effects:
-  # Частицы вокруг игрока во время AFK.
-  particles:
-    enabled: true
-    # Тип частицы
-    type: "minecraft:happy_villager"
-  # AFK-метка (курсив) у ника/таблиста.
+  # A ring of particles around AFK players, every two seconds.
+  particles: { enabled: true, type: "minecraft:happy_villager", radius: 1.5, points: 8 }
+  # A mark in front of AFK players' names in the player list. If TAB or another
+  # plugin formats the list, it overwrites the mark: turn this off there and put
+  # PlaceholderAPI's %moafks_tag% into that plugin's prefix instead.
   nickname:
     enabled: true
-
-# Триггеры выхода из AFK:
-# - combat: метка боя/получение/нанесение урона и т.п.
-# - move: движение (с учётом порога).
-# - chat: сообщения в чат.
-# - command: выполнение любой команды.
-exit_triggers: [combat, move, chat, command]
-
-system:
-  messages:
-    # Сообщение об успешной перезагрузке плагина.
-    reloaded: "<green>✓</green> <aqua>Конфигурация успешно обновлена!</aqua> <green>Всё готово к работе</green>"
-    # Сообщение об ошибочном использовании команды /moafks.
-    incorrect: "<red>×</red> <yellow>Неправильная команда!</yellow> <dark_gray>Используй</dark_gray> <white>/moafks reload</white>"
-    # Сообщение о недостатке прав.
-    restricted: "<red>×</red> <yellow>У тебя недостаточно прав!</yellow> <red>Доступ к этой команде запрещён</red>"
-    # Сообщение, что выход из AFK был небезопасным — телепорт на ближайший безопасный блок.
-    unsafe: "<yellow>!</yellow> <aqua>Выполнена телепортация в безопасное место!</aqua> <dark_gray>Там, где ты находился, было слишком опасно</dark_gray>"
+    mark: "<gray><italic>[AFK]</italic></gray> "

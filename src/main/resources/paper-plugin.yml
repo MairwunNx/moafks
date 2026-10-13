@@ -1,9 +1,24 @@
 name: MoAfks
-version: '1.1.1'
-main: ru.mairwunnx.moafks.PluginUnit
-api-version: '1.21'
-prefix: "Mo'AFKs"
+version: '${version}'
+main: ru.mairwunnx.moafks.MoAfksPlugin
+api-version: '26.3'
 load: POSTWORLD
-authors: [ mairwunnx ]
-description: "🛡️ Пауза в онлайне — теперь возможна. Плагин для PaperMC, который даёт игроку безопасный режим AFK: иммунитет к урону, отсутствие коллизий, игнор мобами, авто-детект неактивности и аккуратные визуальные эффекты. Всё — одной командой /afk."
-website: "https://github.com/mairwunnx/moafks"
+authors: [ MairwunNx ]
+description: "A safe AFK mode for /afk or idle players: no damage, no pushing, mobs leave them alone, and they don't keep the night from passing. Messages in each player’s language, picked by IP."
+website: "https://github.com/MairwunNx/moafks"
+permissions:
+  moafks.afk:
+    description: Use /afk
+    default: true
+  moafks.admin:
+    description: Use /moafks reload, /moafks list, and /moafks locale
+    default: op
+  moafks.reload:
+    description: The 1.x name for moafks.admin; still works
+    default: op
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true

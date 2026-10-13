@@ -1,49 +1,58 @@
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-  kotlin("jvm") version "2.2.0"
-  id("com.gradleup.shadow") version "8.3.0"
-  id("xyz.jpenilla.run-paper") version "2.3.1"
-  id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
+  kotlin("jvm") version "2.4.21"
+  kotlin("plugin.serialization") version "2.4.21"
+  id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "ru.mairwunnx"
-version = "1.1.1"
+// The release workflow passes the version; every other build is a dev build.
+version = (findProperty("releaseVersion") as String?)?.takeIf { it.isNotBlank() } ?: "dev"
 
 repositories {
   mavenCentral()
   maven("https://repo.papermc.io/repository/maven-public/")
-  maven("https://oss.sonatype.org/content/groups/public/")
+  maven("https://repo.extendedclip.com/releases/")
 }
 
 dependencies {
-  compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-  implementation("com.charleskorn.kaml:kaml:0.58.0")
+  compileOnly("io.papermc.paper:paper-api:26.3.build.180-stable")
+  compileOnly("me.clip:placeholderapi:2.12.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
+  implementation("com.charleskorn.kaml:kaml:0.104.0")
+  implementation("com.maxmind.db:maxmind-db:4.2.0")
+
+  testImplementation("io.papermc.paper:paper-api:26.3.build.180-stable")
+  testImplementation(kotlin("test"))
+  testImplementation(platform("org.junit:junit-bom:6.1.3"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-/* ── shadowJar becomes default artifact ─────────────────────────── */
-tasks.build { dependsOn("shadowJar") }
+kotlin {
+  jvmToolchain(25)
+}
 
-/* ── filter plugin.yml with project.version ─────────────────────── */
+tasks.test {
+  useJUnitPlatform()
+}
+
 tasks.processResources {
-  val props = mapOf("version" to version)
-  inputs.properties(props)
-  filteringCharset = "UTF-8"
+  val version = project.version.toString()
+  inputs.property("version", version)
   filesMatching("paper-plugin.yml") {
-    expand(props)
+    expand("version" to version)
   }
 }
 
-/* ── compiler flags ─────────────────────────────────────────────── */
-tasks.withType<KotlinCompile>().configureEach {
-  compilerOptions {
-    freeCompilerArgs.add("-Xcontext-parameters")
-  }
+tasks.shadowJar {
+  archiveClassifier = ""
+  mergeServiceFiles()
+  // Relocated so other plugins that ship their own Kotlin or kaml can't clash with ours.
+  listOf("kotlin", "kotlinx", "com.charleskorn.kaml", "it.krzeminski.snakeyaml", "okio", "net.thauvin", "com.maxmind")
+    .forEach { relocate(it, "ru.mairwunnx.moafks.libs.$it") }
+  exclude("META-INF/*.kotlin_module", "META-INF/versions/*/module-info.class", "module-info.class")
+  dependencies { exclude(dependency("org.jetbrains:annotations")) }
 }
 
-tasks { runServer { minecraftVersion("1.21.8") } }
-kotlin { jvmToolchain(21) }
+tasks.jar { enabled = false }
+tasks.assemble { dependsOn(tasks.shadowJar) }

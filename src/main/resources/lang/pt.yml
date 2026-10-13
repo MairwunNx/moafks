@@ -1,0 +1,49 @@
+# Português. Formato MiniMessage: https://docs.advntr.dev/minimessage/format
+# Marcadores: <player>, <display_name>, <reason>, <time> e <papi:name> para %name% do PlaceholderAPI.
+# Um texto vazio desativa a mensagem.
+
+# Inatividade: para o jogador e depois para os demais.
+auto_enter: "<color:#B388FF>»</color> <gray>Você está AFK: nada pode te machucar. Mexa-se ou digite</gray> <white>/afk</white> <gray>para voltar.</gray>"
+auto_enter_broadcast: "<color:#B388FF>»</color> <white><player></white> <gray>se afastou do teclado.</gray>"
+
+# /afk e /afk <motivo>: para o jogador e depois para os demais.
+manual_enter: "<color:#B388FF>»</color> <gray>Você está AFK. Bom descanso! Mexa-se ou digite</gray> <white>/afk</white> <gray>quando voltar.</gray>"
+manual_enter_reason: "<color:#B388FF>»</color> <gray>Você está AFK:</gray> <white><reason></white><gray>. Mexa-se ou digite</gray> <white>/afk</white> <gray>quando voltar.</gray>"
+manual_enter_broadcast: "<color:#B388FF>»</color> <white><player></white> <gray>se afastou do teclado.</gray>"
+manual_enter_broadcast_reason: "<color:#B388FF>»</color> <white><player></white> <gray>se afastou:</gray> <white><reason></white>"
+
+# A volta; <time> é quanto tempo ficou fora.
+exit: "<color:#69F0AE>«</color> <gray>Bem-vindo de volta! Você ficou fora por</gray> <white><time></white><gray>.</gray>"
+exit_broadcast: "<color:#69F0AE>«</color> <white><player></white> <gray>voltou depois de</gray> <white><time></white><gray>.</gray>"
+
+# Por que /afk não funciona agora.
+declined_combat: "<red>×</red> <gray>Não no meio de uma luta. Espere alguns segundos depois do último golpe.</gray>"
+declined_falling: "<red>×</red> <gray>Não enquanto você cai. Aterrisse primeiro.</gray>"
+declined_burning: "<red>×</red> <gray>Não enquanto você está pegando fogo ou congelando.</gray>"
+declined_liquid: "<red>×</red> <gray>Não na água nem na lava. Vá para terra firme primeiro.</gray>"
+declined_targeted: "<red>×</red> <gray>Não enquanto um mob está atrás de você.</gray>"
+manual_disabled: "<red>×</red> <gray>O /afk está desativado neste servidor.</gray>"
+
+# A barra de ação antes da expulsão, e a expulsão.
+limit_warning: "<yellow>⌛</yellow> <gray>Você está AFK há muito tempo. Expulsão em</gray> <white><time></white><gray>; mexa-se para ficar.</gray>"
+limit_kick: "<gray>Você ficou AFK por tempo demais.</gray>"
+
+moved_to_safety: "<yellow>!</yellow> <gray>Onde você estava era perigoso, então você foi levado a um lugar seguro aqui perto.</gray>"
+void_rescue: "<yellow>!</yellow> <gray>Você caiu no vazio enquanto estava AFK e foi trazido de volta.</gray>"
+
+# <time> em outras mensagens.
+seconds: "<seconds> s"
+minutes: "<minutes> min"
+hours: "<hours> h <minutes> min"
+
+# /moafks list
+list: "<gray>AFK (<count>):</gray> <players>"
+list_entry: "<white><player></white> <dark_gray>(<time>)</dark_gray>"
+list_empty: "<gray>Ninguém está AFK.</gray>"
+
+reloaded: "<green>Mo’Afks recarregado.</green>"
+reload_failed: "<red>Mo’Afks recarregado com erros.</red> <gray>Confira o log do servidor.</gray>"
+usage: "<gray>Use</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white> <gray>ou</gray> <white>/moafks locale [jogador]</white>"
+locale_info: "<white><player></white><gray>: idioma</gray> <white><language></white><gray>, país</gray> <white><country></white><gray>, idioma do jogo</gray> <white><client></white>"
+player_not_found: "<red>Nenhum jogador chamado <player> está online.</red>"
+players_only: "<red>Só jogadores podem fazer isso.</red>"
