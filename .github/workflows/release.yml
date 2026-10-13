@@ -14,6 +14,10 @@ on:
         description: "Also publish to Modrinth (needs the MODRINTH_TOKEN secret)"
         type: boolean
         default: false
+      hangar:
+        description: "Also publish to Hangar (needs the HANGAR_TOKEN secret)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -69,3 +73,8 @@ jobs:
         run: ./gradlew modrinth -PreleaseVersion="$VERSION" -PchangelogFile="$NOTES" --no-configuration-cache
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      - name: Publish to Hangar
+        if: inputs.hangar
+        run: ./gradlew publishPluginPublicationToHangar -PreleaseVersion="$VERSION" -PchangelogFile="$NOTES" --no-configuration-cache
+        env:
+          HANGAR_TOKEN: ${{ secrets.HANGAR_TOKEN }}

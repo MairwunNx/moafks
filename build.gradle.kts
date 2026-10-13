@@ -1,8 +1,11 @@
+import io.papermc.hangarpublishplugin.model.Platforms
+
 plugins {
   kotlin("jvm") version "2.4.21"
   kotlin("plugin.serialization") version "2.4.21"
   id("com.gradleup.shadow") version "9.6.1"
   id("com.modrinth.minotaur") version "2.10.0"
+  id("io.papermc.hangar-publish-plugin") version "0.1.4"
 }
 
 group = "ru.mairwunnx"
@@ -76,4 +79,22 @@ modrinth {
 
 tasks.modrinth {
   dependsOn(tasks.modrinthSyncBody)
+}
+
+// `./gradlew publishPluginPublicationToHangar` with HANGAR_TOKEN set; the release workflow runs it when asked to.
+hangarPublish {
+  publications.register("plugin") {
+    version = project.version.toString()
+    id = "MoAfks"
+    channel = "Release"
+    apiKey = providers.environmentVariable("HANGAR_TOKEN")
+    changelog = (findProperty("changelogFile") as String?)?.let { file(it).readText() }
+      ?: "https://github.com/MairwunNx/moafks/releases/tag/v${project.version}"
+    platforms {
+      register(Platforms.PAPER) {
+        jar = tasks.shadowJar.flatMap { it.archiveFile }
+        platformVersions = listOf("26.3")
+      }
+    }
+  }
 }
