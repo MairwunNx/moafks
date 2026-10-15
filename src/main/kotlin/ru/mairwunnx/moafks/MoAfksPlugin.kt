@@ -19,6 +19,7 @@ class MoAfksPlugin : JavaPlugin() {
   private var geoIpTask: BukkitTask? = null
   private val tasks = mutableListOf<BukkitTask>()
   private var expansion: AutoCloseable? = null
+  var analytics: Analytics? = null; private set
 
   override fun onEnable() {
     if (!reload()) log.warn("Started with the default settings; fix config.yml and run /moafks reload")
@@ -40,6 +41,10 @@ class MoAfksPlugin : JavaPlugin() {
       expansion = runCatching { Placeholders.register(this) }.onFailure { log.warn("Can't register %moafks_…% with PlaceholderAPI: ${it.message}") }.getOrNull()
       if (expansion != null) log.info("PlaceholderAPI found: <papi:…> tags work in messages, %moafks_…% works elsewhere")
     }
+    if (PlanAnalytics.available) {
+      analytics = runCatching { PlanAnalytics.register(this) }.onFailure { log.warn("Can't show AFK time in Plan: ${it.message}") }.getOrNull()
+      if (analytics != null) log.info("Plan found: AFK time shows on its pages")
+    }
     log.info("Mo’Afks ${pluginMeta.version} is on: ${languages.codes.sorted().joinToString()}, default ${resolver.default}")
   }
 
@@ -47,6 +52,9 @@ class MoAfksPlugin : JavaPlugin() {
     tasks.forEach { it.cancel() }
     tasks.clear()
     geoIpTask?.cancel()
+    // Before the quiet exits below: Plan may already be stopping.
+    analytics?.close()
+    analytics = null
     if (::afk.isInitialized) afk.shutdown()
     expansion?.close()
     geoIp.close()

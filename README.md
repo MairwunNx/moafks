@@ -16,6 +16,7 @@
 - ⏱️ **A time limit**, if you want one: a warning in the action bar, then a kick.
 - ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list.
 - 🧩 **PlaceholderAPI**, if you have it: `%moafks_afk%` and friends for TAB and scoreboards, `<papi:…>` in messages.
+- 📊 **Plan**, if you have it: who is AFK now, and each player’s AFK time next to their play time.
 - ⚙️ **`/moafks reload`** applies changes without a restart.
 
 ## Try it live
@@ -93,6 +94,16 @@ With [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) installed, Mo�
 If TAB or another plugin formats the player list, it overwrites Mo’Afks’ mark. Turn `effects.nickname.enabled` off and put `%moafks_tag%` into that plugin’s prefix instead.
 
 The other way round, write `<papi:name>` in any message to show `%name%` for the player it’s about: `<papi:luckperms_prefix><player>`. Mo’Afks doesn’t look for `%…%` in your text, so a percent sign stays a percent sign. Without PlaceholderAPI the tags show nothing.
+
+## Plan
+
+With [Plan](https://modrinth.com/plugin/plan) installed, Mo’Afks shows up on its pages:
+
+- **Plugins Overview** on the server page: how many players are AFK now, and a table of them with how long and why.
+- A player’s **Plugins** tab: AFK now and why, the time AFK across all sessions, and how many times they went AFK.
+- The **players table** gets two columns: AFK now and time AFK. Plan counts AFK time as play time; take Mo’Afks’ number from it to see time really played.
+
+Plan reads these when a player joins or leaves, every few minutes, and whenever someone goes AFK or comes back. The count of times AFK starts with 2.1.0; the time AFK goes back as far as Mo’Afks has counted it.
 
 ## Build
 

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
  * One AFK spell. What AFK changed on the player is kept here, so [Afk] puts back exactly that: null
  * means AFK left the value alone.
  */
-class AfkState(val reason: String?, val manual: Boolean, val since: Long, @Volatile var anchor: Location) {
+class AfkState(val name: String, val reason: String?, val manual: Boolean, val since: Long, @Volatile var anchor: Location) {
   var collidable: Boolean? = null
   var sleepingIgnored: Boolean? = null
   var listName: Component? = null
@@ -31,15 +31,17 @@ class AfkState(val reason: String?, val manual: Boolean, val since: Long, @Volat
 /**
  * Who is AFK, and everything that goes with it: entering and leaving, the idle timer, the time
  * limit, and putting the player back as they were. State is keyed by UUID; Bukkit calls happen on
- * the server thread. [states] and [totals] are concurrent maps because PlaceholderAPI may read them
- * from another plugin's thread.
+ * the server thread. [states], [totals], and [spells] are concurrent maps because PlaceholderAPI and
+ * Plan read them from their own threads.
  */
 class Afk(private val plugin: MoAfksPlugin) {
   private val states = ConcurrentHashMap<UUID, AfkState>()
   private val totals = ConcurrentHashMap<UUID, Long>()
+  private val spells = ConcurrentHashMap<UUID, Long>()
   private val activity = HashMap<UUID, Activity>()
   private val combat = HashMap<UUID, Long>()
   private val totalKey = NamespacedKey(plugin, "afk_seconds")
+  private val spellsKey = NamespacedKey(plugin, "afk_spells")
 
   private val settings get() = plugin.settings
   private val effects get() = plugin.effects
@@ -56,17 +58,31 @@ class Afk(private val plugin: MoAfksPlugin) {
   /** Seconds AFK across all sessions, this spell included. */
   fun totalSeconds(id: UUID): Long = (totals[id] ?: 0L) + (states[id]?.seconds() ?: 0L)
 
+  /** How many times the player went AFK, this spell included. */
+  fun spells(id: UUID): Long = (spells[id] ?: 0L) + (if (states.containsKey(id)) 1 else 0)
+
+  /** Whether the totals of this player are loaded: they played since the server started. */
+  fun known(id: UUID) = totals.containsKey(id)
+
+  val count: Int get() = states.size
+
+  /** Everyone AFK now; safe from any thread. */
+  fun current(): List<AfkState> = states.values.toList()
+
   fun joined(player: Player) {
     touch(player)
     totals[player.uniqueId] = player.persistentDataContainer.getOrDefault(totalKey, PersistentDataType.LONG, 0L)
+    spells[player.uniqueId] = player.persistentDataContainer.getOrDefault(spellsKey, PersistentDataType.LONG, 0L)
   }
 
-  /** The player quit or got kicked: put everything back and forget them. */
+  /**
+   * The player quit or got kicked: put everything back and forget them. Their totals stay, two
+   * numbers a player, because Plan reads them after the quit.
+   */
   fun left(player: Player) {
     exit(player, quiet = true)
     activity.remove(player.uniqueId)
     combat.remove(player.uniqueId)
-    totals.remove(player.uniqueId)
   }
 
   /** Something the player did. When its switch is on, it restarts the idle timer and ends AFK. */
@@ -102,9 +118,10 @@ class Afk(private val plugin: MoAfksPlugin) {
       return false
     }
 
-    val state = AfkState(reason, manual, System.currentTimeMillis(), player.location)
+    val state = AfkState(player.name, reason, manual, System.currentTimeMillis(), player.location)
     apply(player, state)
     states[player.uniqueId] = state
+    plugin.analytics?.changed(player)
     plugin.log.debug { "${player.name} is AFK: ${if (manual) "manual" else "idle"}${reason?.let { ", $it" }.orEmpty()}" }
 
     val withReason: (String) -> Array<TagResolver> = { arrayOf(Placeholder.unparsed("reason", reason.orEmpty())) }
@@ -135,6 +152,7 @@ class Afk(private val plugin: MoAfksPlugin) {
     restore(player, state)
     val seconds = state.seconds()
     addTotal(player, seconds)
+    plugin.analytics?.changed(player)
     touch(player)
     if (quiet) return
 
@@ -273,10 +291,15 @@ class Afk(private val plugin: MoAfksPlugin) {
   // Paper turns the name into a vanilla component and back, which may not compare equal; the text does.
   private fun plain(component: Component) = PlainTextComponentSerializer.plainText().serialize(component)
 
+  /** Adds a finished spell to the player's totals, in memory and in their saved data. */
   private fun addTotal(player: Player, seconds: Long) {
-    val total = (totals[player.uniqueId] ?: player.persistentDataContainer.getOrDefault(totalKey, PersistentDataType.LONG, 0L)) + seconds
+    val data = player.persistentDataContainer
+    val total = (totals[player.uniqueId] ?: data.getOrDefault(totalKey, PersistentDataType.LONG, 0L)) + seconds
+    val count = (spells[player.uniqueId] ?: data.getOrDefault(spellsKey, PersistentDataType.LONG, 0L)) + 1
     totals[player.uniqueId] = total
-    player.persistentDataContainer.set(totalKey, PersistentDataType.LONG, total)
+    spells[player.uniqueId] = count
+    data.set(totalKey, PersistentDataType.LONG, total)
+    data.set(spellsKey, PersistentDataType.LONG, count)
   }
 
   private fun moveToSafety(player: Player) {
