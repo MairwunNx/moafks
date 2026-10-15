@@ -16,6 +16,7 @@
 - ⏱️ **A time limit**, if you want one: a warning in the action bar, then a kick.
 - ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list. Vanished players stay hidden: nobody learns they went AFK.
 - 🧩 **PlaceholderAPI**, if you have it: `%moafks_afk%` and friends for TAB and scoreboards, `<papi:…>` in messages.
+- 🧩 **MiniPlaceholders**, if you have it: the same values as `<moafks_afk>` and friends, and other plugins’ tags in messages.
 - 📊 **Plan**, if you have it: who is AFK now, and each player’s AFK time next to their play time.
 - ⚙️ **`/moafks reload`** applies changes without a restart.
 
@@ -96,6 +97,12 @@ With [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) installed, Mo�
 If TAB or another plugin formats the player list, it overwrites Mo’Afks’ mark. Turn `effects.nickname.enabled` off and put `%moafks_tag%` into that plugin’s prefix instead.
 
 The other way round, write `<papi:name>` in any message to show `%name%` for the player it’s about: `<papi:luckperms_prefix><player>`. Mo’Afks doesn’t look for `%…%` in your text, so a percent sign stays a percent sign. Without PlaceholderAPI the tags show nothing.
+
+## MiniPlaceholders
+
+[MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) does for MiniMessage what PlaceholderAPI does for `%…%` text. With it installed, Mo’Afks adds `<moafks_afk>`, `<moafks_afk_time>`, `<moafks_afk_total>`, `<moafks_reason>`, and `<moafks_tag>`, the same values as the PlaceholderAPI ones above, for the player they’re shown for.
+
+The other way round, any MiniPlaceholders tag works in Mo’Afks’ messages and fills in for the player the message is about, like `<player_name>`. A player’s own words, such as an AFK reason, stay plain text.
 
 ## Plan
 

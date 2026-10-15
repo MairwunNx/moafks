@@ -24,6 +24,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 | `Languages.kt`, `GeoIp.kt`, `Messenger.kt` | `Message` keys and texts, `LocaleResolver`, the DB-IP country database, and rendering per reader |
 | `AfkCommand.kt`, `MoAfksCommand.kt` | `/afk [reason]`; `/moafks reload`, `/moafks list`, `/moafks locale [player]` |
 | `Placeholders.kt` | The `<papi:name>` tag and the `%moafks_…%` expansion; PlaceholderAPI is optional, so its classes load only when it's there |
+| `AdventurePlaceholders.kt` | MiniPlaceholders, optional: other plugins' tags in messages and the `<moafks_…>` expansion. Its classes load only when it's there |
 | `Vanish.kt` | Who is vanished: the `vanished` metadata vanish plugins set, read on the server thread and kept in a set for TAB's and Plan's threads |
 | `Plan.kt` | The Plan extension: AFK now, why, time AFK, and times AFK per player; who is AFK on the server. Plan is optional, so its classes load only when it's there; `Afk` nudges it on every enter and exit, and it registers again after `/plan reload` |
 
@@ -39,6 +40,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 - A new message gets a `Message` entry and a line in every bundled language (`src/main/resources/lang/`); `ResourcesTest` fails otherwise. Moonlands keeps its own copies in `minecraft/config/plugins/MoAfks/lang/`, so add the line there too.
 - A new config key gets a default in `Settings` and the same default in `src/main/resources/config.yml`; `ResourcesTest` checks they match. A 1.x config must still load (`src/test/resources/config-1.x.yml`).
 - Render with `Placeholder.unparsed` for player-provided text, so a name or an AFK reason can't inject tags. PlaceholderAPI goes through `<papi:…>` only; never run `%…%` replacement over whole texts.
+- A message about a player renders through `Messenger.render(code, message, subject, …)`: it adds `about(subject)` and passes the subject as MiniMessage's target, which MiniPlaceholders' per-player tags read. `<moafks_…>` and `%moafks_…%` give the same values.
 - A new protection is a handler in `ProtectionListener` behind a switch, a row in the table below, and, when it's a decision, a case in `Rules` with a test.
 
 ## Events
@@ -138,7 +140,7 @@ Events other plugins cancelled still count: the player still acted.
 1. `./gradlew build`: the tests and the jar.
 2. A real Paper with the jar, started and stopped by the script, which fails on any error about the plugin:
    ```sh
-   python3 -I .claude/scripts/paper_smoke.py --game 26.3 --plugin build/libs/moafks-dev.jar --modrinth placeholderapi --modrinth plan --command "papi list" --expect "registered internal expansion: moafks" --expect "Registered extension: Mo’Afks" --ignore "Plan\] Failed to enable geolocation"
+   python3 -I .claude/scripts/paper_smoke.py --game 26.3 --plugin build/libs/moafks-dev.jar --modrinth placeholderapi --modrinth plan --jar https://cdn.modrinth.com/data/HQyibRsN/versions/N2WfJ0ll/MiniPlaceholders-Paper-3.2.0.jar --command "papi list" --command "miniplaceholders expansions" --expect "registered internal expansion: moafks" --expect "Registered extension: Mo’Afks" --expect "^moafks$" --ignore "Plan\] Failed to enable geolocation"
    ```
    Pass `--game` the version the project targets, and `--build` to pin a Paper build. The script downloads Paper and Modrinth plugins into `~/.cache/paper-smoke` and keeps the server folder when something fails.
 3. The console can't go AFK, so anything about a player needs a game client: after a release reaches Moonlands, the owner tries `/afk`, idling, and the night with someone AFK. Every event in “Events” is a case to try when its handling changed.
@@ -149,6 +151,7 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 
 - The game: `io.papermc.paper:paper-api` (twice: `compileOnly` and `testImplementation`), `gameVersions` (Modrinth) and `platformVersions` (Hangar) in `build.gradle.kts`, and `api-version` in `src/main/resources/paper-plugin.yml`. A new game version can add events that hurt, move, or reward a player: check them against “Events”.
 - PlaceholderAPI: `compileOnly("me.clip:placeholderapi:…")`, from `repo.extendedclip.com`.
+- MiniPlaceholders: `compileOnly("io.github.miniplaceholders:miniplaceholders-api:…")` from Maven Central. Its Modrinth release 3.2.0 lists games up to 26.2, so the check passes its jar with `--jar <Modrinth file URL>` instead of `--modrinth`; switch to `--modrinth miniplaceholders` once a release lists the game version.
 - Plan: `compileOnly("com.djrapitops:plan-api:…")`, from `repo.playeranalytics.net`. Moonlands runs Plan 5.8, whose API lacks graphs and statistics (`DATA_EXTENSION_GRAPH_API`, `DATA_EXTENSION_STATISTICS_API`): use them only once Plan 5.9 is out and installed. `PlanAnalytics` checks the capabilities it uses.
 - Java: `jvmToolchain` in `build.gradle.kts`, the foojay resolver in `settings.gradle.kts`, and CI's `setup-java`.
 - Gradle in `gradle/wrapper/gradle-wrapper.properties`; Kotlin and the Gradle plugins in the `plugins` block; libraries in `dependencies`.

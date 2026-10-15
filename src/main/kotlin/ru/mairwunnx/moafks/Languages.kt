@@ -1,5 +1,6 @@
 package ru.mairwunnx.moafks
 
+import net.kyori.adventure.pointer.Pointered
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -55,8 +56,11 @@ class Languages(private val texts: Map<String, Map<String, String>>, val default
     texts[code]?.get(message.key) ?: texts[default]?.get(message.key) ?: texts[FALLBACK]?.get(message.key)
 
   /** An empty text turns a message off, so a server can drop, say, quit messages for one language. */
-  fun render(code: String, message: Message, vararg resolvers: TagResolver): Component? =
-    text(code, message)?.takeIf { it.isNotBlank() }?.let { mini.deserialize(it, *resolvers) }
+  fun render(code: String, message: Message, vararg resolvers: TagResolver): Component? = render(code, message, null, *resolvers)
+
+  /** [target] is the player the message is about: per-player tags from other plugins read it. */
+  fun render(code: String, message: Message, target: Pointered?, vararg resolvers: TagResolver): Component? =
+    text(code, message)?.takeIf { it.isNotBlank() }?.let { if (target == null) mini.deserialize(it, *resolvers) else mini.deserialize(it, target, *resolvers) }
 
   companion object {
     const val FALLBACK = "en"

@@ -20,6 +20,7 @@ class MoAfksPlugin : JavaPlugin() {
   private var geoIpTask: BukkitTask? = null
   private val tasks = mutableListOf<BukkitTask>()
   private var expansion: AutoCloseable? = null
+  private var miniExpansion: AutoCloseable? = null
   var analytics: Analytics? = null; private set
 
   override fun onEnable() {
@@ -42,6 +43,10 @@ class MoAfksPlugin : JavaPlugin() {
       expansion = runCatching { Placeholders.register(this) }.onFailure { log.warn("Can't register %moafks_…% with PlaceholderAPI: ${it.message}") }.getOrNull()
       if (expansion != null) log.info("PlaceholderAPI found: <papi:…> tags work in messages, %moafks_…% works elsewhere")
     }
+    if (AdventurePlaceholders.available) {
+      miniExpansion = runCatching { AdventurePlaceholders.register(this) }.onFailure { log.warn("Can't register <moafks_…> with MiniPlaceholders: ${it.message}") }.getOrNull()
+      if (miniExpansion != null) log.info("MiniPlaceholders found: its tags work in messages, <moafks_…> works elsewhere")
+    }
     if (PlanAnalytics.available) {
       analytics = runCatching { PlanAnalytics.register(this) }.onFailure { log.warn("Can't show AFK time in Plan: ${it.message}") }.getOrNull()
       if (analytics != null) log.info("Plan found: AFK time shows on its pages")
@@ -58,6 +63,7 @@ class MoAfksPlugin : JavaPlugin() {
     analytics = null
     if (::afk.isInitialized) afk.shutdown()
     expansion?.close()
+    miniExpansion?.close()
     geoIp.close()
   }
 

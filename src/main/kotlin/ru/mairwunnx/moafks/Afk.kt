@@ -201,13 +201,13 @@ class Afk(private val plugin: MoAfksPlugin) {
       if (!settings.limits.warning.enabled) continue
       Rules.warning(remaining, settings.limits.warning.seconds, state.warned)?.let { seconds ->
         val code = messenger.languageOf(player)
-        messenger.render(code, Message.LIMIT_WARNING, *messenger.about(player), messenger.time(code, seconds.toLong()))?.let(player::sendActionBar)
+        messenger.render(code, Message.LIMIT_WARNING, player, messenger.time(code, seconds.toLong()))?.let(player::sendActionBar)
         effects.play(player, effects.warning)
       }
     }
     // Kicking fires the quit event, which changes the online list; so kick after the loop.
     kicks.forEach { player ->
-      val reason = messenger.render(messenger.languageOf(player), Message.LIMIT_KICK, *messenger.about(player)) ?: Component.empty()
+      val reason = messenger.render(messenger.languageOf(player), Message.LIMIT_KICK, player) ?: Component.empty()
       plugin.log.info("${player.name} stayed AFK past the limit; kicking")
       player.kick(reason)
     }

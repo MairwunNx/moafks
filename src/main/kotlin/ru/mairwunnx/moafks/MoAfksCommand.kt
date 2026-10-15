@@ -45,7 +45,7 @@ class MoAfksCommand(private val plugin: MoAfksPlugin) : BasicCommand {
     val code = messenger.languageOf(sender)
     val entries = afk.mapNotNull { (player, state) ->
       messenger.render(
-        code, Message.LIST_ENTRY, *messenger.about(player),
+        code, Message.LIST_ENTRY, player,
         messenger.time(code, state.seconds()),
         Placeholder.unparsed("reason", state.reason.orEmpty()),
       )

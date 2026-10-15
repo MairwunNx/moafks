@@ -52,6 +52,10 @@ With [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) installed, Mo�
 
 In messages, `<papi:name>` shows `%name%` for the player it’s about. Mo’Afks doesn’t look for `%…%` in your text, so a percent sign stays a percent sign.
 
+## MiniPlaceholders
+
+With [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) installed, Mo’Afks adds `<moafks_afk>`, `<moafks_afk_time>`, `<moafks_afk_total>`, `<moafks_reason>`, and `<moafks_tag>`, and its messages fill in any MiniPlaceholders tag for the player they’re about.
+
 ## Plan
 
 With [Plan](https://modrinth.com/plugin/plan) installed, its Plugins Overview shows who is AFK now, for how long, and why. Each player’s Plugins tab and the players table show their time AFK across all sessions, so you can tell AFK time from time really played.
