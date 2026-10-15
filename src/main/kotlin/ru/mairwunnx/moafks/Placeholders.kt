@@ -54,7 +54,8 @@ object Placeholders {
 
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
       val id = player?.uniqueId ?: return ""
-      val state = plugin.afk.state(id)
+      // TAB shows these to everyone: a vanished player reads as not AFK.
+      val state = plugin.afk.visibleState(id)
       return when (params.lowercase()) {
         "afk" -> if (state != null) PlaceholderAPIPlugin.booleanTrue() else PlaceholderAPIPlugin.booleanFalse()
         "afk_time" -> "${state?.seconds() ?: 0}"

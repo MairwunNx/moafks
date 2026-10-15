@@ -14,7 +14,7 @@
 - 🔙 **Coming back is up to the player:** walking, jumping, turning the camera, chatting, clicking, and more, each a switch. Water, pistons, and minecarts moving them don’t count. If they come back somewhere dangerous, they land on a safe spot nearby.
 - 🌍 **Every player reads their own language.** The plugin finds the player’s country by IP and picks a language for it: English, Russian, Spanish, Portuguese, and German come bundled.
 - ⏱️ **A time limit**, if you want one: a warning in the action bar, then a kick.
-- ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list.
+- ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list. Vanished players stay hidden: nobody learns they went AFK.
 - 🧩 **PlaceholderAPI**, if you have it: `%moafks_afk%` and friends for TAB and scoreboards, `<papi:…>` in messages.
 - 📊 **Plan**, if you have it: who is AFK now, and each player’s AFK time next to their play time.
 - ⚙️ **`/moafks reload`** applies changes without a restart.
@@ -48,6 +48,8 @@ A player goes AFK with `/afk [reason]`, or after `auto.seconds` (five minutes) w
 While AFK, the switches in `protection` decide what the player is shielded from, and `gains` whether they may collect items and experience. `anti_abuse` decides when a player may not go AFK; an idle player in one of those spots waits until it’s over. When a player comes back, their fall distance and freezing reset, and if they stand in lava, fire, powder snow, or a wall, they’re moved to a safe spot nearby.
 
 AFK changes nothing the game saves. A player who quits while AFK comes back not AFK, with nothing left over.
+
+A vanished player stays hidden. Vanish plugins like SuperVanish, PremiumVanish, and Essentials mark such players, and Mo’Afks reads that mark. Others hear nothing when a vanished player goes AFK or comes back, see no mark or particles, and find them in no placeholder and in no Plan list. The player keeps the protection and their own messages.
 
 ## How a player gets their language
 

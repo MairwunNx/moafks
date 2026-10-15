@@ -46,12 +46,15 @@ class AfkEffects(settings: Settings, private val log: Log) {
     sound?.let { player.playSound(it, Sound.Emitter.self()) }
   }
 
-  fun ring(player: Player) {
+  /** The particle ring around an AFK player; [onlyFor] shows it to them alone, as for a vanished player. */
+  fun ring(player: Player, onlyFor: Boolean = false) {
     val particle = particle ?: return
     val center = player.location.add(0.0, 1.0, 0.0)
     for (i in 0 until points) {
       val angle = 2 * PI * i / points
-      player.world.spawnParticle(particle, center.clone().add(cos(angle) * radius, 0.0, sin(angle) * radius), 1, 0.05, 0.05, 0.05, 0.0)
+      val at = center.clone().add(cos(angle) * radius, 0.0, sin(angle) * radius)
+      if (onlyFor) player.spawnParticle(particle, at, 1, 0.05, 0.05, 0.05, 0.0)
+      else player.world.spawnParticle(particle, at, 1, 0.05, 0.05, 0.05, 0.0)
     }
   }
 

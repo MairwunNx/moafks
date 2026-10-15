@@ -13,6 +13,7 @@ class MoAfksPlugin : JavaPlugin() {
   val log = Log(logger) { settings.debug }
   val geoIp by lazy { GeoIp(dataFolder.resolve("geoip"), log) }
   val messenger = Messenger(this)
+  val vanish = Vanish()
   lateinit var afk: Afk; private set
   lateinit var sessions: SessionListener; private set
 

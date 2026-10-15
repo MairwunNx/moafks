@@ -12,7 +12,7 @@
 - 🔙 **Coming back is up to the player:** walking, jumping, turning the camera, chatting, clicking, and more, each a switch. Water, pistons, and minecarts moving them don’t count, so AFK pools don’t fool it. If they come back somewhere dangerous, they land on a safe spot nearby.
 - 🌍 **Every player reads their own language.** The plugin finds the player’s country by IP and picks a language for it: English, Russian, Spanish, Portuguese, and German come bundled. Write messages in [MiniMessage](https://docs.advntr.dev/minimessage/format): colors, gradients, clickable links.
 - ⏱️ **A time limit**, if you want one: a warning in the action bar, then a kick.
-- ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list.
+- ✨ **A ring of particles** around AFK players and an **[AFK] mark** in the player list. Players hidden by a vanish plugin stay hidden: nobody learns they went AFK.
 - ⚙️ **`/moafks reload`** applies changes without a restart, and AFK players stay AFK.
 
 AFK changes nothing the game saves. A player who quits while AFK comes back not AFK, with nothing left over.

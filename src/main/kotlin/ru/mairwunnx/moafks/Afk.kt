@@ -53,6 +53,9 @@ class Afk(private val plugin: MoAfksPlugin) {
 
   fun state(id: UUID): AfkState? = states[id]
 
+  /** The player's AFK state as others may know it: none while they're vanished. Safe from any thread. */
+  fun visibleState(id: UUID): AfkState? = states[id]?.takeUnless { plugin.vanish.hidden(id) }
+
   fun afk(): List<Pair<Player, AfkState>> = states.mapNotNull { (id, state) -> Bukkit.getPlayer(id)?.let { it to state } }
 
   /** Seconds AFK across all sessions, this spell included. */
@@ -64,12 +67,11 @@ class Afk(private val plugin: MoAfksPlugin) {
   /** Whether the totals of this player are loaded: they played since the server started. */
   fun known(id: UUID) = totals.containsKey(id)
 
-  val count: Int get() = states.size
-
-  /** Everyone AFK now; safe from any thread. */
-  fun current(): List<AfkState> = states.values.toList()
+  /** Everyone AFK now whom others may see; safe from any thread. */
+  fun visible(): List<AfkState> = states.filterKeys { !plugin.vanish.hidden(it) }.values.toList()
 
   fun joined(player: Player) {
+    plugin.vanish.check(player)
     touch(player)
     totals[player.uniqueId] = player.persistentDataContainer.getOrDefault(totalKey, PersistentDataType.LONG, 0L)
     spells[player.uniqueId] = player.persistentDataContainer.getOrDefault(spellsKey, PersistentDataType.LONG, 0L)
@@ -83,6 +85,7 @@ class Afk(private val plugin: MoAfksPlugin) {
     exit(player, quiet = true)
     activity.remove(player.uniqueId)
     combat.remove(player.uniqueId)
+    plugin.vanish.forget(player.uniqueId)
   }
 
   /** Something the player did. When its switch is on, it restarts the idle timer and ends AFK. */
@@ -171,6 +174,14 @@ class Afk(private val plugin: MoAfksPlugin) {
   /** Every second: idle players go AFK, AFK players near the limit get warned, and those past it get kicked. */
   fun tick() {
     if (!settings.enabled) return
+    // Vanishing or reappearing while AFK hides or shows the mark, and Plan hears of it.
+    plugin.vanish.refresh().forEach { player ->
+      states[player.uniqueId]?.let { state ->
+        restore(player, state)
+        apply(player, state)
+        plugin.analytics?.changed(player)
+      }
+    }
     val now = System.currentTimeMillis()
     val kicks = mutableListOf<Player>()
     for (player in Bukkit.getOnlinePlayers()) {
@@ -203,7 +214,7 @@ class Afk(private val plugin: MoAfksPlugin) {
   }
 
   fun particles() {
-    if (settings.enabled) afk().forEach { (player, _) -> effects.ring(player) }
+    if (settings.enabled) afk().forEach { (player, _) -> effects.ring(player, onlyFor = plugin.vanish.hidden(player.uniqueId)) }
   }
 
   /** The player fell into the void while AFK: back to where they went AFK, or to their spawn point. */
@@ -258,7 +269,8 @@ class Afk(private val plugin: MoAfksPlugin) {
       state.sleepingIgnored = player.isSleepingIgnored
       player.isSleepingIgnored = true
     }
-    effects.mark?.let { mark ->
+    // A vanished player's name shows no mark: others would learn they're there.
+    effects.mark?.takeUnless { plugin.vanish.hidden(player.uniqueId) }?.let { mark ->
       val original = player.playerListName()
       val marked = mark.append(original)
       state.listName = original

@@ -6,6 +6,7 @@ The “Release” workflow takes the notes for a version from its section here, 
 
 - 📊 **Plan.** With Plan installed, its Plugins Overview shows who is AFK now, for how long, and why. A player’s Plugins tab shows whether they’re AFK, their time AFK across all sessions, and how many times they went AFK; the players table gets AFK now and time AFK as columns. Plan counts AFK time as play time, so this tells the two apart. Plan is optional.
 - Mo’Afks now counts how many times each player went AFK, kept with their AFK time in the player’s data.
+- 🫥 **Vanished players stay hidden.** With SuperVanish, PremiumVanish, Essentials, or any vanish plugin that marks players the usual way, nobody else hears a vanished player go AFK or come back. Their name gets no [AFK] mark, the particle ring shows only to them, `%moafks_afk%` reads false and `%moafks_tag%` empty, and Plan leaves them out. Their own protection and messages stay.
 
 ## 2.0.0
 

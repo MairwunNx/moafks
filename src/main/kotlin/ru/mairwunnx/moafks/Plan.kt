@@ -72,7 +72,7 @@ object PlanAnalytics {
 
 /**
  * The values Plan shows. Plan calls these from its own threads, so they read only [Afk]'s concurrent
- * maps, never Bukkit. A player Mo’Afks hasn't seen since the server started is “not ready”, and Plan
+ * maps, never Bukkit, and leave out vanished players. A player Mo’Afks hasn't seen since the server started is “not ready”, and Plan
  * keeps what it stored before.
  */
 @PluginInfo(name = "Mo’Afks", iconName = "bed", iconFamily = Family.SOLID, color = Color.TEAL)
@@ -86,12 +86,12 @@ class PlanExtension(private val plugin: MoAfksPlugin) : DataExtension {
     text = "AFK now", conditionName = "afk", priority = 100,
     iconName = "bed", iconFamily = Family.SOLID, iconColor = Color.TEAL, showInPlayerTable = true,
   )
-  fun afk(player: UUID): Boolean = plugin.afk.state(player) != null
+  fun afk(player: UUID): Boolean = plugin.afk.visibleState(player) != null
 
   @Conditional("afk")
   @StringProvider(text = "Why", description = "The reason given with /afk, or how the player went AFK", priority = 90, iconName = "comment", iconColor = Color.TEAL)
   fun reason(player: UUID): String {
-    val state = plugin.afk.state(player) ?: throw NotReadyException()
+    val state = plugin.afk.visibleState(player) ?: throw NotReadyException()
     return state.reason ?: if (state.manual) "/afk without a reason" else "Idle"
   }
 
@@ -105,7 +105,7 @@ class PlanExtension(private val plugin: MoAfksPlugin) : DataExtension {
   fun spells(player: UUID): Long = if (plugin.afk.known(player)) plugin.afk.spells(player) else throw NotReadyException()
 
   @NumberProvider(text = "AFK now", description = "Players in AFK mode right now", priority = 100, iconName = "bed", iconColor = Color.TEAL)
-  fun afkNow(): Long = plugin.afk.count.toLong()
+  fun afkNow(): Long = plugin.afk.visible().size.toLong()
 
   @TableProvider(tableColor = Color.TEAL)
   fun afkPlayers(): Table {
@@ -114,7 +114,7 @@ class PlanExtension(private val plugin: MoAfksPlugin) : DataExtension {
       .columnOne("AFK now", Icon.called("user").build()).columnOneFormat(TableColumnFormat.PLAYER_NAME)
       .columnTwo("For", Icon.called("clock").of(Family.REGULAR).build()).columnTwoFormat(TableColumnFormat.TIME_MILLISECONDS)
       .columnThree("Why", Icon.called("comment").build())
-    plugin.afk.current().sortedBy { it.since }.forEach { state ->
+    plugin.afk.visible().sortedBy { it.since }.forEach { state ->
       table.addRow(state.name, now - state.since, state.reason ?: if (state.manual) "/afk" else "Idle")
     }
     return table.build()

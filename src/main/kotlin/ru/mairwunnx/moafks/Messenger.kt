@@ -28,10 +28,14 @@ class Messenger(private val plugin: MoAfksPlugin) {
     render(code, message, *about(subject), *extra(code))?.let(subject::sendMessage)
   }
 
-  /** A message about [subject] to everyone else online and the console, each in their own language. */
+  /**
+   * A message about [subject] to everyone else online and the console, each in their own language.
+   * Players don't hear about a vanished subject; the console still logs it.
+   */
   fun announce(subject: Player, message: Message, extra: (String) -> Array<TagResolver> = { emptyArray() }) {
+    val hidden = plugin.vanish.check(subject)
     Bukkit.getOnlinePlayers().forEach { reader ->
-      if (reader.uniqueId == subject.uniqueId) return@forEach
+      if (hidden || reader.uniqueId == subject.uniqueId) return@forEach
       val code = languageOf(reader)
       render(code, message, *about(subject), *extra(code))?.let(reader::sendMessage)
     }

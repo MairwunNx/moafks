@@ -24,6 +24,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 | `Languages.kt`, `GeoIp.kt`, `Messenger.kt` | `Message` keys and texts, `LocaleResolver`, the DB-IP country database, and rendering per reader |
 | `AfkCommand.kt`, `MoAfksCommand.kt` | `/afk [reason]`; `/moafks reload`, `/moafks list`, `/moafks locale [player]` |
 | `Placeholders.kt` | The `<papi:name>` tag and the `%moafks_…%` expansion; PlaceholderAPI is optional, so its classes load only when it's there |
+| `Vanish.kt` | Who is vanished: the `vanished` metadata vanish plugins set, read on the server thread and kept in a set for TAB's and Plan's threads |
 | `Plan.kt` | The Plan extension: AFK now, why, time AFK, and times AFK per player; who is AFK on the server. Plan is optional, so its classes load only when it's there; `Afk` nudges it on every enter and exit, and it registers again after `/plan reload` |
 
 ## Rules that keep it working
@@ -31,6 +32,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 - State lives in maps keyed by UUID. `states`, `totals`, and `spells` are concurrent because TAB asks PlaceholderAPI from its own thread and Plan calls its extension from its own; `totals` and `spells` outlive a quit, since Plan reads them after it; everything else, Bukkit calls included, stays on the server thread. The chat event is async and hops over with `runTask`.
 - AFK never changes anything the game saves: no `setInvulnerable`, no scoreboard teams, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total and the count of AFK spells go into the player's persistent data.
 - `restore()` undoes only what `apply()` changed, and only if nothing else changed it since.
+- Nobody else may learn a vanished player is AFK: no broadcast (the console still logs it), no list mark, the particle ring only to them, and `visibleState()`/`visible()` for anything others read (placeholders, Plan). Their own protection and private lines stay. Read metadata only through `Vanish.check` on the server thread; off-thread code asks `Vanish.hidden`.
 - `/moafks reload` only re-reads files and reapplies effects to AFK players. Never call `onDisable()`/`onEnable()` from it: `registerCommand` fails after startup.
 - Activity comes from input, not position: `PlayerInputEvent` for keys, `PlayerMoveEvent` for the camera only. Water, pistons, and vehicles move a player without them doing anything.
 - Game ids stay strings in `Settings`; `AfkEffects` resolves them once per load and logs a warning for a bad one. A bad id never fails the whole config.
