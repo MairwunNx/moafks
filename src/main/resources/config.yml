@@ -59,7 +59,7 @@ protection:
   damage: true        # Every kind of damage but /kill. Air doesn't run out under water.
   void: true          # Falling into the void takes them back to where they went AFK.
   knockback: true     # Hits, explosions, and wind charges don't push them.
-  collision: true     # Mobs and players walk through them.
+  collision: true     # Mobs and players walk through them. Uses TAB's teams, or the moafks_afk team without TAB.
   projectiles: true   # Arrows, snowballs, ender pearls, and fishing hooks fly through them.
   effects: true       # Harmful potion effects don't stick, except from commands.
   hunger: true        # Hunger stays put, and so does health: no drain, no natural healing.

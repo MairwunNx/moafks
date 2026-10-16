@@ -116,12 +116,13 @@ class MoAfksPlugin : JavaPlugin() {
     geoIpTask = server.scheduler.runTaskTimerAsynchronously(this, Runnable { if (geoIp.isStale(config)) geoIp.refresh(config) }, 0L, 20L * 60 * 60 * 12)
   }
 
-  /** 1.x put AFK players into a scoreboard team, which outlived a crash in the world save. */
+  /** Teams outlive a crash in the world save: 1.x's, and ours from a run that didn't shut down. */
   private fun removeOldTeam() {
     server.scoreboardManager.mainScoreboard.getTeam("moafks_noclip")?.let {
       it.unregister()
       log.info("Removed the moafks_noclip team left by Mo’Afks 1.x")
     }
+    TeamCollision.clear()
   }
 
   /** A file in the data folder, copied from the jar first when it isn't there yet. */

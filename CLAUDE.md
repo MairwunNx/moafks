@@ -25,13 +25,14 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 | `AfkCommand.kt`, `MoAfksCommand.kt` | `/afk [reason]`; `/moafks reload`, `/moafks list`, `/moafks locale [player]` |
 | `Placeholders.kt` | The `<papi:name>` tag and the `%moafks_…%` expansion; PlaceholderAPI is optional, so its classes load only when it's there |
 | `AdventurePlaceholders.kt` | MiniPlaceholders, optional: other plugins' tags in messages and the `<moafks_…>` expansion. Its classes load only when it's there |
+| `Collision.kt` | Collision off on the client: TAB's collision rule when TAB is on, or the `moafks_afk` team. TAB is optional, so its classes load only when it's there |
 | `Vanish.kt` | Who is vanished: the `vanished` metadata vanish plugins set, read on the server thread and kept in a set for TAB's and Plan's threads |
 | `Plan.kt` | The Plan extension: AFK now, why, time AFK, and times AFK per player; who is AFK on the server. Plan is optional, so its classes load only when it's there; `Afk` nudges it on every enter and exit, and it registers again after `/plan reload` |
 
 ## Rules that keep it working
 
 - State lives in maps keyed by UUID. `states`, `totals`, and `spells` are concurrent because TAB asks PlaceholderAPI from its own thread and Plan calls its extension from its own; `totals` and `spells` outlive a quit, since Plan reads them after it; everything else, Bukkit calls included, stays on the server thread. The chat event is async and hops over with `runTask`.
-- AFK never changes anything the game saves: no `setInvulnerable`, no scoreboard teams, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total and the count of AFK spells go into the player's persistent data.
+- AFK never changes anything the game saves: no `setInvulnerable`, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total and the count of AFK spells go into the player's persistent data. The one exception is the `moafks_afk` team (`Collision.kt`): it exists only while someone is AFK, and the start removes one a crash left behind.
 - `restore()` undoes only what `apply()` changed, and only if nothing else changed it since.
 - Nobody else may learn a vanished player is AFK: no broadcast (the console still logs it), no list mark, the particle ring only to them, and `visibleState()`/`visible()` for anything others read (placeholders, Plan). Their own protection and private lines stay. Read metadata only through `Vanish.check` on the server thread; off-thread code asks `Vanish.hidden`.
 - `/moafks reload` only re-reads files and reapplies effects to AFK players. Never call `onDisable()`/`onEnable()` from it: `registerCommand` fails after startup.
@@ -59,7 +60,7 @@ Every Paper 26.3 event that could hurt or move an AFK player, let them gain some
 | Fall distance (no event) | Reset to 0 on return, so a fall during AFK doesn't land after it | `protection.damage` |
 | `EntityKnockbackEvent` (also `…ByEntity`) | Cancelled for every cause: hits, sweeps, explosions, wind charges, shields | `protection.knockback` |
 | `EntityPushedByEntityAttackEvent` | Cancelled | `protection.knockback` |
-| Entity pushing (no cancellable event) | `Player#setCollidable(false)` while AFK: mobs and the server don't push them. Another player's client may still nudge them on its own screen | `protection.collision` |
+| Entity pushing (no cancellable event) | `Player#setCollidable(false)` while AFK: mobs and the server don't push them. That alone isn't enough: the AFK player's own client pushes them away from other players, and the server takes the move. Clients learn the rule only from the team, so the player's team gets collision off too: through TAB's API when TAB runs teams (it overrides every other team), otherwise in the `moafks_afk` team. A player already in another team keeps it and can still be pushed | `protection.collision` |
 | `EntityCollideWithEntityEvent` | Not used: collidable covers it | — |
 | `ProjectileHitEvent` | Cancelled when it hits an AFK player: arrows, tridents, snowballs, eggs, ender pearls (no teleport onto them), wind charges, fishing hooks fly through | `protection.projectiles` |
 | `PlayerFishEvent`, state `CAUGHT_ENTITY` | Cancelled when the hooked entity is AFK: a rod that hooked them earlier can't reel them in | `protection.projectiles` |

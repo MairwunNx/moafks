@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class AfkState(val name: String, val reason: String?, val manual: Boolean, val since: Long, @Volatile var anchor: Location) {
   var collidable: Boolean? = null
+  var clientCollision: ClientCollision? = null
   var sleepingIgnored: Boolean? = null
   var listName: Component? = null
   var marked: Component? = null
@@ -264,6 +265,10 @@ class Afk(private val plugin: MoAfksPlugin) {
     if (settings.protection.collision) {
       state.collidable = player.isCollidable
       player.isCollidable = false
+      // The server alone isn't enough: the player's own client pushes them unless their team says no.
+      val collision = Collision.pick()
+      if (collision.off(player)) state.clientCollision = collision
+      else plugin.log.debug { "${player.name} is in a team Mo’Afks can't change; other players can still push them" }
     }
     if (settings.sleepIgnored) {
       state.sleepingIgnored = player.isSleepingIgnored
@@ -286,6 +291,7 @@ class Afk(private val plugin: MoAfksPlugin) {
 
   private fun restore(player: Player, state: AfkState) {
     state.collidable?.let { player.isCollidable = it }
+    state.clientCollision?.restore(player)
     // Only undo what's still ours: another plugin may have changed it since.
     state.sleepingIgnored?.let { if (player.isSleepingIgnored) player.isSleepingIgnored = it }
     state.marked?.let { marked ->
@@ -295,6 +301,7 @@ class Afk(private val plugin: MoAfksPlugin) {
       }
     }
     state.collidable = null
+    state.clientCollision = null
     state.sleepingIgnored = null
     state.listName = null
     state.marked = null

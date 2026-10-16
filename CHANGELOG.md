@@ -2,6 +2,10 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.1.1
+
+- 🐛 **AFK players can’t be pushed anymore.** Walking into an AFK player used to shove them aside: the server had collision off, but the AFK player’s own client didn’t know and moved them away. Now their team tells every client, so other players walk through them. With TAB, Mo’Afks sets the rule through TAB’s API; without it, AFK players join the `moafks_afk` team, which exists only while someone is AFK. A player already in another team keeps it.
+
 ## 2.1.0
 
 - 📊 **Plan.** With Plan installed, its Plugins Overview shows who is AFK now, for how long, and why. A player’s Plugins tab shows whether they’re AFK, their time AFK across all sessions, and how many times they went AFK; the players table gets AFK now and time AFK as columns. Plan counts AFK time as play time, so this tells the two apart. Plan is optional.
