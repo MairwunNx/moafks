@@ -38,6 +38,13 @@ enum class Message(val key: String) {
   LOCALE_INFO("locale_info"),
   PLAYER_NOT_FOUND("player_not_found"),
   PLAYERS_ONLY("players_only"),
+  LANGUAGE_LIST_AUTO("language_list_auto"),
+  LANGUAGE_LIST_CHOSEN("language_list_chosen"),
+  LANGUAGE_ENTRY("language_entry"),
+  LANGUAGE_ENTRY_CURRENT("language_entry_current"),
+  LANGUAGE_SET("language_set"),
+  LANGUAGE_AUTO("language_auto"),
+  LANGUAGE_UNKNOWN("language_unknown"),
 }
 
 /**
@@ -50,6 +57,9 @@ class Languages(private val texts: Map<String, Map<String, String>>, val default
   val codes: Set<String> get() = texts.keys
 
   fun has(code: String) = code in texts
+
+  /** The languages to choose from, the bundled ones first. */
+  fun ordered(): List<String> = codes.sortedWith(compareBy({ it !in BUNDLED }, { BUNDLED.indexOf(it) }, { it }))
 
   /** The raw text, or null when no language sets it, which means the message is off. */
   fun text(code: String, message: Message): String? =
@@ -65,10 +75,17 @@ class Languages(private val texts: Map<String, Map<String, String>>, val default
   companion object {
     const val FALLBACK = "en"
     val BUNDLED = listOf("en", "ru", "es", "pt", "de")
+    private val NAMES = mapOf("en" to "English", "ru" to "Русский", "es" to "Español", "pt" to "Português", "de" to "Deutsch")
+
+    /** Each bundled language by its own name; a file a server added shows its code. */
+    fun name(code: String): String = NAMES[code] ?: code
   }
 }
 
-/** Picks a player's language from their country and their game's language setting. */
+/**
+ * Picks a player's language: the one they chose with `/moafks language`, else from their country and
+ * their game's language setting.
+ */
 class LocaleResolver(private val settings: Settings.Locales, private val available: Set<String>) {
   private val byCountry: Map<String, String> = buildMap {
     settings.countries.forEach { (code, countries) -> countries.forEach { putIfAbsent(it.uppercase(), normalize(code)) } }
@@ -76,7 +93,8 @@ class LocaleResolver(private val settings: Settings.Locales, private val availab
 
   val default: String = normalize(settings.default).takeIf { it in available } ?: Languages.FALLBACK
 
-  fun resolve(country: String?, client: Locale?): String {
+  fun resolve(country: String?, client: Locale?, chosen: String? = null): String {
+    chosen?.let(::normalize)?.takeIf { it in available }?.let { return it }
     for (source in settings.sources) {
       val code = when (source) {
         Settings.Source.IP -> country?.let { byCountry[it.uppercase()] }
@@ -85,6 +103,12 @@ class LocaleResolver(private val settings: Settings.Locales, private val availab
       if (code != null && code in available) return code
     }
     return default
+  }
+
+  /** A typed code, like `/moafks language pt-BR`: a `pt_br` file first, then `pt`; null when there's neither. */
+  fun match(typed: String): String? {
+    val wanted = normalize(typed)
+    return wanted.takeIf { it in available } ?: wanted.substringBefore('_').takeIf { it in available }
   }
 
   /** `pt_BR` matches a `pt_br` file first, then `pt`. */

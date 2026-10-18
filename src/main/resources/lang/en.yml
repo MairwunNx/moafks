@@ -43,7 +43,16 @@ list_empty: "<gray>Nobody is AFK.</gray>"
 
 reloaded: "<green>Mo’Afks reloaded.</green>"
 reload_failed: "<red>Mo’Afks reloaded with errors.</red> <gray>Check the server log.</gray>"
-usage: "<gray>Use</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white><gray>, or</gray> <white>/moafks locale [player]</white>"
+usage: "<gray>Use</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white><gray>,</gray> <white>/moafks locale [player]</white><gray>, or</gray> <white>/moafks language [code|auto]</white>"
 locale_info: "<white><player></white><gray>: language</gray> <white><language></white><gray>, country</gray> <white><country></white><gray>, game language</gray> <white><client></white>"
 player_not_found: "<red>No player named <player> is online.</red>"
 players_only: "<red>Only players can do this.</red>"
+
+# /moafks language: the list, a click on an entry picks it; <language> is the language’s own name.
+language_list_auto: "<gray>Mo’Afks speaks</gray> <white><language></white> <gray>to you, picked automatically. To change it, type</gray> <white>/moafks language</white> <gray>and a code, or click one. Languages:</gray> <languages>"
+language_list_chosen: "<gray>Mo’Afks speaks</gray> <white><language></white> <gray>to you, as you chose. To change it, type</gray> <white>/moafks language</white> <gray>and a code, or</gray> <white>auto</white> <gray>to let Mo’Afks pick. Languages:</gray> <languages>"
+language_entry: "<gray><name></gray> <dark_gray>(<code>)</dark_gray>"
+language_entry_current: "<green><name></green> <dark_gray>(<code>)</dark_gray>"
+language_set: "<green>✔</green> <gray>Mo’Afks speaks</gray> <white><language></white> <gray>to you now.</gray>"
+language_auto: "<green>✔</green> <gray>Mo’Afks picks your language itself again. For now it’s</gray> <white><language></white><gray>.</gray>"
+language_unknown: "<red>×</red> <gray>Mo’Afks has no language</gray> <white><code></white><gray>. Pick one of these:</gray> <languages>"

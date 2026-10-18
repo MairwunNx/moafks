@@ -27,9 +27,10 @@ Mo’Afks needs Paper 26.3 or a fork of it, like Purpur, on Java 25. A 1.x `conf
 
 ## How a player gets their language
 
-1. **By IP.** The plugin looks up the player’s country and checks `locales.countries`: Russia gets Russian, Brazil gets Portuguese, Germany gets German, and so on. You can change the lists.
-2. **By game language.** When the country isn’t listed, the plugin takes the language set in the player’s game, if a file in `lang/` matches it.
-3. **Default.** Everyone else gets `locales.default`, English out of the box.
+1. **The player’s choice.** A player who picked a language with `/moafks language <code>` always gets it.
+2. **By IP.** The plugin looks up the player’s country and checks `locales.countries`: Russia gets Russian, Brazil gets Portuguese, Germany gets German, and so on. You can change the lists.
+3. **By game language.** When the country isn’t listed, the plugin takes the language set in the player’s game, if a file in `lang/` matches it.
+4. **Default.** Everyone else gets `locales.default`, English out of the box.
 
 The country lookup needs no account and sends no address anywhere. On the first start, the plugin downloads a free country database (4 MB) and refreshes it every month. Players who connect through a proxy show up with the proxy’s address, so they get the proxy’s country.
 
@@ -40,11 +41,12 @@ The country lookup needs no account and sends no address anywhere. On the first 
 | Command | What it does |
 |---|---|
 | `/afk [reason]` | Goes AFK, or comes back |
+| `/moafks language [code\|auto]` | Sets the language Mo’Afks speaks to you; `auto` lets the plugin pick it again. Without an argument, lists the languages |
 | `/moafks reload` | Reloads the config and the messages |
 | `/moafks list` | Shows who is AFK and for how long |
 | `/moafks locale [player]` | Shows a player’s language, country, and game language |
 
-`/afk` needs `moafks.afk`, which everyone has. The rest need `moafks.admin`, which operators have.
+`/afk` needs `moafks.afk`, which everyone has. Every player can use `/moafks language`. The rest need `moafks.admin`, which operators have.
 
 ## PlaceholderAPI
 

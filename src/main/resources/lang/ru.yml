@@ -43,7 +43,16 @@ list_empty: "<gray>Никто не в AFK.</gray>"
 
 reloaded: "<green>Mo’Afks перезагружен.</green>"
 reload_failed: "<red>Mo’Afks перезагружен с ошибками.</red> <gray>Загляните в лог сервера.</gray>"
-usage: "<gray>Команды:</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white> <gray>и</gray> <white>/moafks locale [игрок]</white>"
+usage: "<gray>Команды:</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white><gray>,</gray> <white>/moafks locale [игрок]</white> <gray>и</gray> <white>/moafks language [код|auto]</white>"
 locale_info: "<white><player></white><gray>: язык</gray> <white><language></white><gray>, страна</gray> <white><country></white><gray>, язык игры</gray> <white><client></white>"
 player_not_found: "<red>Игрока <player> нет в сети.</red>"
 players_only: "<red>Это может сделать только игрок.</red>"
+
+# /moafks language: список, щелчок по языку выбирает его; <language> — название языка на нём самом.
+language_list_auto: "<gray>Ваш язык в Mo’Afks —</gray> <white><language></white><gray>, он выбран автоматически. Чтобы сменить его, введите</gray> <white>/moafks language</white> <gray>и код или щёлкните по языку. Языки:</gray> <languages>"
+language_list_chosen: "<gray>Ваш язык в Mo’Afks —</gray> <white><language></white><gray>, вы выбрали его сами. Чтобы сменить его, введите</gray> <white>/moafks language</white> <gray>и код, а чтобы Mo’Afks выбирал сам —</gray> <white>auto</white><gray>. Языки:</gray> <languages>"
+language_entry: "<gray><name></gray> <dark_gray>(<code>)</dark_gray>"
+language_entry_current: "<green><name></green> <dark_gray>(<code>)</dark_gray>"
+language_set: "<green>✔</green> <gray>Теперь ваш язык в Mo’Afks —</gray> <white><language></white><gray>.</gray>"
+language_auto: "<green>✔</green> <gray>Mo’Afks снова выбирает язык сам. Сейчас это</gray> <white><language></white><gray>.</gray>"
+language_unknown: "<red>×</red> <gray>В Mo’Afks нет языка</gray> <white><code></white><gray>. Выберите один из этих:</gray> <languages>"

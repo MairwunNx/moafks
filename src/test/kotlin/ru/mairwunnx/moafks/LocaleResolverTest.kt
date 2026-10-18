@@ -32,4 +32,27 @@ class LocaleResolverTest {
   @Test fun `a missing default language falls back to English`() {
     assertEquals("en", LocaleResolver(Settings.Locales(default = "de"), available).default)
   }
+
+  @Test fun `the player's choice beats every rule`() {
+    assertEquals("es", resolver.resolve("RU", Locale.forLanguageTag("ru"), chosen = "es"))
+    assertEquals("pt_br", resolver.resolve(null, null, chosen = "PT-BR"))
+  }
+
+  @Test fun `a choice without its file falls back to the rules`() {
+    assertEquals("ru", resolver.resolve("RU", null, chosen = "de"))
+  }
+
+  @Test fun `a typed code matches the file or its language`() {
+    assertEquals("ru", resolver.match("RU"))
+    assertEquals("pt_br", resolver.match("pt-BR"))
+    assertEquals("es", resolver.match("es_MX"))
+    assertEquals(null, resolver.match("de"))
+  }
+
+  @Test fun `bundled languages come first, by their own names`() {
+    val languages = Languages(mapOf("de" to emptyMap(), "uk" to emptyMap(), "en" to emptyMap(), "ru" to emptyMap()), "en")
+    assertEquals(listOf("en", "ru", "de", "uk"), languages.ordered())
+    assertEquals("Русский", Languages.name("ru"))
+    assertEquals("uk", Languages.name("uk"))
+  }
 }

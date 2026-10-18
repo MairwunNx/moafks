@@ -43,7 +43,16 @@ list_empty: "<gray>Nadie está AFK.</gray>"
 
 reloaded: "<green>Mo’Afks recargado.</green>"
 reload_failed: "<red>Mo’Afks recargado con errores.</red> <gray>Revisa el registro del servidor.</gray>"
-usage: "<gray>Usa</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white> <gray>o</gray> <white>/moafks locale [jugador]</white>"
+usage: "<gray>Usa</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white><gray>,</gray> <white>/moafks locale [jugador]</white> <gray>o</gray> <white>/moafks language [código|auto]</white>"
 locale_info: "<white><player></white><gray>: idioma</gray> <white><language></white><gray>, país</gray> <white><country></white><gray>, idioma del juego</gray> <white><client></white>"
 player_not_found: "<red>No hay ningún jugador llamado <player> en línea.</red>"
 players_only: "<red>Solo los jugadores pueden hacer esto.</red>"
+
+# /moafks language: la lista, un clic en un idioma lo elige; <language> es el nombre del idioma en ese idioma.
+language_list_auto: "<gray>Mo’Afks te habla en</gray> <white><language></white><gray>, elegido automáticamente. Para cambiarlo, escribe</gray> <white>/moafks language</white> <gray>y un código, o haz clic en uno. Idiomas:</gray> <languages>"
+language_list_chosen: "<gray>Mo’Afks te habla en</gray> <white><language></white><gray>, como elegiste. Para cambiarlo, escribe</gray> <white>/moafks language</white> <gray>y un código, o</gray> <white>auto</white> <gray>para que Mo’Afks elija. Idiomas:</gray> <languages>"
+language_entry: "<gray><name></gray> <dark_gray>(<code>)</dark_gray>"
+language_entry_current: "<green><name></green> <dark_gray>(<code>)</dark_gray>"
+language_set: "<green>✔</green> <gray>Ahora Mo’Afks te habla en</gray> <white><language></white><gray>.</gray>"
+language_auto: "<green>✔</green> <gray>Mo’Afks vuelve a elegir tu idioma. Ahora es</gray> <white><language></white><gray>.</gray>"
+language_unknown: "<red>×</red> <gray>Mo’Afks no tiene el idioma</gray> <white><code></white><gray>. Elige uno de estos:</gray> <languages>"

@@ -54,7 +54,7 @@ A vanished player stays hidden. Vanish plugins like SuperVanish, PremiumVanish, 
 
 ## How a player gets their language
 
-The plugin tries the sources in `locales.sources`, in order:
+A player who picked a language with `/moafks language <code>` always gets it. Otherwise the plugin tries the sources in `locales.sources`, in order:
 
 1. **`ip`:** the country of the player’s IP address. `locales.countries` maps languages to country codes: Russia, Belarus, and Kazakhstan get Russian; Spain and Latin America get Spanish; Brazil and Portugal get Portuguese; Germany, Austria, and Switzerland get German.
 2. **`client`:** the language set in the player’s game, when a file in `lang/` matches it.
@@ -76,11 +76,12 @@ A key missing from a language file comes from the default language. An empty str
 | Command | What it does |
 |---|---|
 | `/afk [reason]` | Goes AFK, or comes back |
+| `/moafks language [code\|auto]` | Sets the language Mo’Afks speaks to you; `auto` lets the plugin pick it again. Without an argument, lists the languages; click one to pick it |
 | `/moafks reload` | Reloads `config.yml` and the language files; AFK players stay AFK |
 | `/moafks list` | Shows who is AFK and for how long |
 | `/moafks locale [player]` | Shows a player’s language, country, and game language |
 
-`/afk` needs `moafks.afk`, which everyone has. The rest need `moafks.admin`, which operators have; 1.x’s `moafks.reload` still works.
+`/afk` needs `moafks.afk`, which everyone has. Every player can use `/moafks language`, and the choice stays in their player data across restarts. The rest need `moafks.admin`, which operators have; 1.x’s `moafks.reload` still works.
 
 ## PlaceholderAPI
 

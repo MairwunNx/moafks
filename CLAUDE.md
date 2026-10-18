@@ -1,6 +1,6 @@
 # Mo’Afks: notes for AI agents
 
-A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after standing idle: nothing hurts or moves them, mobs leave them alone, and they don't keep the night from passing. Messages reach each player in their own language, picked by IP. README.md explains it for players and server owners; README.RU.md is its Russian copy. Moonlands, the owner's server (MairwunNx/minecraft), is where it's meant to run.
+A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after standing idle: nothing hurts or moves them, mobs leave them alone, and they don't keep the night from passing. Messages reach each player in their own language: the one they chose with `/moafks language`, else picked by IP. README.md explains it for players and server owners; README.RU.md is its Russian copy. Moonlands, the owner's server (MairwunNx/minecraft), is where it's meant to run.
 
 ## Talking to the owner
 
@@ -21,8 +21,8 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 | `SessionListener.kt` | Country lookup at login, the idle timer at join, quiet exits on quit, death, and world change |
 | `AfkEffects.kt` | Sounds, the particle ring, the name mark; game ids resolve against registries on load |
 | `SafeSpot.kt` | On return, whether the player stands somewhere that hurts, and the nearest spot that doesn't |
-| `Languages.kt`, `GeoIp.kt`, `Messenger.kt` | `Message` keys and texts, `LocaleResolver`, the DB-IP country database, and rendering per reader |
-| `AfkCommand.kt`, `MoAfksCommand.kt` | `/afk [reason]`; `/moafks reload`, `/moafks list`, `/moafks locale [player]` |
+| `Languages.kt`, `GeoIp.kt`, `Messenger.kt` | `Message` keys and texts, `LocaleResolver`, the DB-IP country database, and rendering per reader. A player's choice (`Messenger.chosen`) beats every rule in `LocaleResolver.resolve`; every language lookup goes through `Messenger.languageOf` |
+| `AfkCommand.kt`, `MoAfksCommand.kt` | `/afk [reason]`; `/moafks language [code\|auto]` for every player; `/moafks reload`, `/moafks list`, `/moafks locale [player]` for admins |
 | `Placeholders.kt` | The `<papi:name>` tag and the `%moafks_…%` expansion; PlaceholderAPI is optional, so its classes load only when it's there |
 | `AdventurePlaceholders.kt` | MiniPlaceholders, optional: other plugins' tags in messages and the `<moafks_…>` expansion. Its classes load only when it's there |
 | `Collision.kt` | Collision off on the client: TAB's collision rule when TAB is on, or the `moafks_afk` team. TAB is optional, so its classes load only when it's there |
@@ -32,7 +32,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 ## Rules that keep it working
 
 - State lives in maps keyed by UUID. `states`, `totals`, and `spells` are concurrent because TAB asks PlaceholderAPI from its own thread and Plan calls its extension from its own; `totals` and `spells` outlive a quit, since Plan reads them after it; everything else, Bukkit calls included, stays on the server thread. The chat event is async and hops over with `runTask`.
-- AFK never changes anything the game saves: no `setInvulnerable`, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total and the count of AFK spells go into the player's persistent data. The one exception is the `moafks_afk` team (`Collision.kt`): it exists only while someone is AFK, and the start removes one a crash left behind.
+- AFK never changes anything the game saves: no `setInvulnerable`, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total, the count of AFK spells, and the language a player chose go into the player's persistent data. The one exception is the `moafks_afk` team (`Collision.kt`): it exists only while someone is AFK, and the start removes one a crash left behind.
 - `restore()` undoes only what `apply()` changed, and only if nothing else changed it since.
 - Nobody else may learn a vanished player is AFK: no broadcast (the console still logs it), no list mark, the particle ring only to them, and `visibleState()`/`visible()` for anything others read (placeholders, Plan). Their own protection and private lines stay. Read metadata only through `Vanish.check` on the server thread; off-thread code asks `Vanish.hidden`.
 - `/moafks reload` only re-reads files and reapplies effects to AFK players. Never call `onDisable()`/`onEnable()` from it: `registerCommand` fails after startup.

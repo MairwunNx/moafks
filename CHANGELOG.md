@@ -2,6 +2,11 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.2.0
+
+- 🗣️ **Each player picks their language.** `/moafks language` lists the languages by their own names, and a click picks one; `/moafks language <code>` sets it, and `/moafks language auto` hands the choice back to the plugin. The choice beats the IP and the game language, stays in the player’s data across restarts, and every player can use it. `/moafks` without `moafks.admin` shows the same list.
+- New messages in `lang/`: `language_list_auto`, `language_list_chosen`, `language_entry`, `language_entry_current`, `language_set`, `language_auto`, and `language_unknown`. `usage` now mentions `/moafks language`. If you keep your own language files, add these keys; until then they come from the bundled English.
+
 ## 2.1.1
 
 - 🐛 **AFK players can’t be pushed anymore.** Walking into an AFK player used to shove them aside: the server had collision off, but the AFK player’s own client didn’t know and moved them away. Now their team tells every client, so other players walk through them. With TAB, Mo’Afks sets the rule through TAB’s API; without it, AFK players join the `moafks_afk` team, which exists only while someone is AFK. A player already in another team keeps it.

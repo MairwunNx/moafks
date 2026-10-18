@@ -4,16 +4,31 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
+import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.persistence.PersistentDataType
 
 /**
  * Renders messages for each reader in their own language. Placeholders that depend on the language,
  * like `<time>`, come from a function of the language code, so a broadcast builds them per recipient.
  */
 class Messenger(private val plugin: MoAfksPlugin) {
+  private val choiceKey by lazy { NamespacedKey(plugin, "language") }
+
+  /** The player's choice beats every automatic rule, as long as a file for it is still there. */
   fun languageOf(sender: CommandSender): String =
-    (sender as? Player)?.let { plugin.resolver.resolve(plugin.sessions.country(it), it.locale()) } ?: plugin.resolver.default
+    (sender as? Player)?.let { plugin.resolver.resolve(plugin.sessions.country(it), it.locale(), chosen(it)) } ?: plugin.resolver.default
+
+  /** The language the player chose with `/moafks language`, kept in their data; null when Mo’Afks picks. */
+  fun chosen(player: Player): String? =
+    player.persistentDataContainer.get(choiceKey, PersistentDataType.STRING)?.takeIf { plugin.languages.has(it) }
+
+  /** Sets the player's language, or with null hands the choice back to Mo’Afks. */
+  fun choose(player: Player, code: String?) {
+    val data = player.persistentDataContainer
+    if (code == null) data.remove(choiceKey) else data.set(choiceKey, PersistentDataType.STRING, code)
+  }
 
   fun render(code: String, message: Message, vararg resolvers: TagResolver): Component? =
     plugin.languages.render(code, message, *resolvers)

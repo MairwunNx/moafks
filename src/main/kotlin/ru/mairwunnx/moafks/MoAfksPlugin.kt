@@ -33,7 +33,7 @@ class MoAfksPlugin : JavaPlugin() {
     server.pluginManager.registerEvents(ActivityListener(this), this)
     server.pluginManager.registerEvents(ProtectionListener(this), this)
     registerCommand("afk", "Go AFK, or come back", AfkCommand(this))
-    registerCommand("moafks", "Reload Mo’Afks, list AFK players, or check a player’s language", MoAfksCommand(this))
+    registerCommand("moafks", "Choose your Mo’Afks language; admins reload, list AFK players, or check a player’s language", MoAfksCommand(this))
 
     afk.start()
     tasks += server.scheduler.runTaskTimer(this, Runnable { afk.tick() }, 20L, 20L)

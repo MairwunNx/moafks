@@ -43,7 +43,16 @@ list_empty: "<gray>Niemand ist AFK.</gray>"
 
 reloaded: "<green>Mo’Afks neu geladen.</green>"
 reload_failed: "<red>Mo’Afks mit Fehlern neu geladen.</red> <gray>Schau ins Server-Log.</gray>"
-usage: "<gray>Nutze</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white> <gray>oder</gray> <white>/moafks locale [Spieler]</white>"
+usage: "<gray>Nutze</gray> <white>/moafks reload</white><gray>,</gray> <white>/moafks list</white><gray>,</gray> <white>/moafks locale [Spieler]</white> <gray>oder</gray> <white>/moafks language [Code|auto]</white>"
 locale_info: "<white><player></white><gray>: Sprache</gray> <white><language></white><gray>, Land</gray> <white><country></white><gray>, Spielsprache</gray> <white><client></white>"
 player_not_found: "<red><player> ist nicht online.</red>"
 players_only: "<red>Das geht nur als Spieler.</red>"
+
+# /moafks language: die Liste, ein Klick wählt eine Sprache; <language> ist der Name der Sprache in ihr selbst.
+language_list_auto: "<gray>Mo’Afks spricht</gray> <white><language></white> <gray>mit dir, automatisch gewählt. Zum Wechseln gib</gray> <white>/moafks language</white> <gray>und einen Code ein oder klick eine Sprache an. Sprachen:</gray> <languages>"
+language_list_chosen: "<gray>Mo’Afks spricht</gray> <white><language></white> <gray>mit dir, so wie du es gewählt hast. Zum Wechseln gib</gray> <white>/moafks language</white> <gray>und einen Code ein, mit</gray> <white>auto</white> <gray>wählt Mo’Afks wieder selbst. Sprachen:</gray> <languages>"
+language_entry: "<gray><name></gray> <dark_gray>(<code>)</dark_gray>"
+language_entry_current: "<green><name></green> <dark_gray>(<code>)</dark_gray>"
+language_set: "<green>✔</green> <gray>Mo’Afks spricht jetzt</gray> <white><language></white> <gray>mit dir.</gray>"
+language_auto: "<green>✔</green> <gray>Mo’Afks wählt deine Sprache wieder selbst. Gerade ist es</gray> <white><language></white><gray>.</gray>"
+language_unknown: "<red>×</red> <gray>Mo’Afks kennt die Sprache</gray> <white><code></white> <gray>nicht. Wähl eine davon:</gray> <languages>"
