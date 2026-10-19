@@ -1,12 +1,12 @@
 # Mo’Afks: notes for AI agents
 
-A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after standing idle: nothing hurts or moves them, mobs leave them alone, and they don't keep the night from passing. Messages reach each player in their own language: the one they chose with `/moafks language`, else picked by IP. README.md explains it for players and server owners; README.RU.md is its Russian copy. Moonlands, the owner's server (MairwunNx/minecraft), is where it's meant to run.
+A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after standing idle: nothing hurts or moves them, mobs leave them alone, and they don't keep the night from passing. Messages reach each player in their own language: the one they chose with `/moafks language`, else picked by IP. README.md is the shop window (what it gives, badges, how to start, related projects); README.RU.md is its Russian copy. The manual lives in the GitHub wiki (`https://github.com/MairwunNx/moafks.wiki.git`, English only): installation, how AFK works, commands, configuration, languages, integrations, FAQ, and the developer pages. Moonlands, the owner's server (MairwunNx/minecraft), is where it's meant to run.
 
 ## Talking to the owner
 
 - Reply in Russian, address the owner as «вы». Quotes «ёлочки», nested „лапки“, an em dash with spaces « — ».
 - Code, comments, commit messages, README.md, and the English language file are in English: curly quotes, an em dash without spaces or an en dash with spaces, never a hyphen as a dash.
-- README.RU.md and `lang/ru.yml` follow Russian typography; `lang/de.yml` uses „…“, an en dash with spaces, and „du“. Change both READMEs and MODRINTH.md together.
+- README.RU.md and `lang/ru.yml` follow Russian typography; `lang/de.yml` uses „…“, an en dash with spaces, and „du“. Change both READMEs and MODRINTH.md together. A change to commands, permissions, config keys, placeholders, or behavior goes into the wiki page that covers it; the READMEs and MODRINTH.md don't repeat the manual, and they carry no License, Build, Stack, or AI sections.
 
 ## How it fits together
 
@@ -169,7 +169,7 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 
 ## Modrinth
 
-The project is `moafks` (id `6d2YvMjy`), MIT. The “Release” workflow has a `modrinth` switch, off by default: on, it runs `./gradlew modrinth`, which uploads the jar as a version and syncs MODRINTH.md as the description. MODRINTH.md is for server owners: no build, stack, or related projects, and no Moonlands banner. A change to what the plugin does goes in README.md, README.RU.md, and MODRINTH.md. It uses the `MODRINTH_TOKEN` secret; locally the same token is in `~/.secrets/cloud.env`. The icon is `media/icon.png`. Never put the token in the repo.
+The project is `moafks` (id `6d2YvMjy`), MIT. The “Release” workflow has a `modrinth` switch, off by default: on, it runs `./gradlew modrinth`, which uploads the jar as a version and syncs MODRINTH.md as the description. MODRINTH.md is for server owners: the pitch, “What you get”, “Get started”, links into the wiki, and Related projects; no build or stack, and no Moonlands banner. The store page changes only with the next release that runs `modrinth`. A change to what the plugin does goes in README.md, README.RU.md, MODRINTH.md, and the wiki. It uses the `MODRINTH_TOKEN` secret; locally the same token is in `~/.secrets/cloud.env`. The icon is `media/icon.png`. Never put the token in the repo.
 
 ## Commits
 

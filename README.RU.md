@@ -1,9 +1,9 @@
 # Mo’Afks
 
 <p align="center">
+  <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
   <a href="https://modrinth.com/plugin/moafks"><img alt="Modrinth" src="https://img.shields.io/modrinth/dt/moafks?logo=modrinth&label=Modrinth&color=00AF5C"></a>
   <a href="https://hangar.papermc.io/MairwunNx/MoAfks"><img alt="Hangar" src="https://img.shields.io/hangar/dt/MoAfks?label=Hangar&color=1E88E5"></a>
-  <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
   <img alt="Paper 26.3" src="https://img.shields.io/badge/Paper-26.3-F7CF0D">
   <img alt="Java 25" src="https://img.shields.io/badge/Java-25-E76F00">
   <a href="https://github.com/MairwunNx/moafks/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/MairwunNx/moafks/build.yml?branch=master&label=build"></a>
@@ -14,200 +14,46 @@
 
 [English version](https://github.com/MairwunNx/moafks/blob/master/README.md)
 
-## Возможности
-
-- 🛡️ **Игрока в AFK ничто не ранит:** никакого урона, огня, утопления и голода. Если он упадёт в пустоту, плагин вернёт его туда, где он ушёл в AFK.
-- 🧲 **Его ничто не сдвинет:** удары и взрывы не отбрасывают, мобы и игроки проходят насквозь, снаряды и крючки удочек пролетают мимо, лодки и вагонетки его не подхватят.
-- 👻 **Мобы его не трогают:** никто не выбирает его целью, варден его не слышит, эндермены не злятся на взгляд, фантомы к нему не прилетают, а «Дурное знамение» не начинает рейд.
-- 🌙 **Игроки в AFK не мешают ночи пройти.** На сервере, где спать должны все, один отошедший друг больше не держит всех в темноте.
-- ⚖️ **Защитой нельзя злоупотребить.** В AFK не уйти посреди боя, в падении, в огне, в воде или лаве и когда за вами гонится моб. Игрок в AFK не подбирает предметы и опыт, а его здоровье и голод замирают.
-- 🔙 **Возвращается игрок сам:** ходьба, прыжок, поворот камеры, чат, клики и другое — каждое действие включается отдельно. Если игрока сдвинула вода, поршень или вагонетка, это не считается. Если он вернулся в опасном месте, плагин перенесёт его на безопасное место рядом.
-- 🌍 **Каждый читает на своём языке.** Плагин определяет страну игрока по IP и выбирает язык: английский, русский, испанский, португальский и немецкий идут в комплекте.
-- ⏱️ **Ограничение времени**, если нужно: предупреждение над хотбаром, затем кик.
-- ✨ **Кольцо частиц** вокруг игроков в AFK и **метка [AFK]** в списке игроков. Игроки в ванише остаются невидимыми: никто не узнает, что они ушли в AFK.
-- 🧩 **PlaceholderAPI**, если он стоит: `%moafks_afk%` и другие для TAB и табло, `<papi:…>` в сообщениях.
-- 🧩 **MiniPlaceholders**, если он стоит: те же значения как `<moafks_afk>` и другие, а в сообщениях — теги других плагинов.
-- 📊 **Plan**, если он стоит: кто сейчас в AFK и сколько времени каждый игрок провёл в AFK, рядом с его временем игры.
-- ⚙️ **`/moafks reload`** применяет изменения без перезапуска.
-
-## Попробовать вживую
-
-Mo’Afks работает на Moonlands — моём сервере со сложным выживанием для друзей. Заходите, введите `/afk` и посмотрите, от чего он защищает.
-
 [![Играйте на Moonlands: чистая ваниль, сложные мобы, ИИ, приваты. ru.minecraft.mairwunnx.com](https://raw.githubusercontent.com/MairwunNx/moafks/master/media/og-adv-image.ru.png)](https://minecraft.mairwunnx.com)
 
-Адрес для игроков из России — `ru.minecraft.mairwunnx.com`, для остальных — `minecraft.mairwunnx.com`. На сайте — живая карта, статистика игроков и зал славы.
+Mo’Afks работает на Moonlands — моём сервере со сложным выживанием для друзей. Заходите на `ru.minecraft.mairwunnx.com` из России или на `minecraft.mairwunnx.com` откуда угодно, введите `/afk` и посмотрите, от чего он защищает.
 
-## Установка
+## Возможности
 
-Mo’Afks нужен Paper 26.3 или его форк, например Purpur, на Java 25. PlaceholderAPI, MiniPlaceholders, TAB и Plan — по желанию.
+- 🛡️ **Игрока в AFK ничто не ранит и не сдвинет:** ни урона, ни огня, ни утопления, ни голода, ни отбрасывания, а снаряды пролетают насквозь. Из пустоты плагин вернёт его назад.
+- 👻 **Мобы его не трогают:** никто не выбирает его целью, варден его не слышит, фантомы не прилетают, а «Дурное знамение» не начинает рейд.
+- 🌙 **Игроки в AFK не мешают ночи пройти.** Один отошедший друг больше не держит всех в темноте.
+- ⚖️ **Защитой нельзя злоупотребить.** В AFK не уйти посреди боя, в падении или когда за вами гонится моб, а игрок в AFK не подбирает предметы и опыт.
+- 🔙 **Возвращается игрок сам.** Его вернёт нажатая клавиша, клик или сообщение в чат, но не вода и не поршень. Из опасного места плагин перенесёт его в безопасное.
+- 🌍 **Каждый читает на своём языке:** плагин выбирает его по IP, а игрок может выбрать сам. Английский, русский, испанский, португальский и немецкий идут в комплекте.
+- ✨ **Все видят, кто отошёл:** кольцо частиц и метка [AFK]. По желанию — ограничение времени с киком. Игроки в ванише остаются невидимыми.
+- 🧩 **Плагин встраивается в сервер:** PlaceholderAPI, TAB, MiniPlaceholders и Plan, если они стоят, и `/moafks reload` без перезапуска.
 
-### Через Docker (рекомендуем)
+## Как начать
 
-Если сервер работает в [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io), он сам скачает Mo’Afks. Достаточно назвать его в `MODRINTH_PROJECTS`:
+1. Скачайте jar с [Modrinth](https://modrinth.com/plugin/moafks), [Hangar](https://hangar.papermc.io/MairwunNx/MoAfks) или [GitHub](https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar) и положите в `plugins/` сервера Paper 26.3 на Java 25. В [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io) вместо этого добавьте `moafks` в `MODRINTH_PROJECTS`.
+2. Перезапустите сервер, зайдите и введите `/afk обедаю`.
+3. Страница [First steps](https://github.com/MairwunNx/moafks/wiki/First-steps) объясняет, как настроить таймер бездействия и кик.
 
-```yaml
-services:
-  minecraft:
-    image: itzg/minecraft-server:java25
-    environment:
-      EULA: "TRUE"
-      TYPE: PAPER
-      VERSION: "26.3"
-      MODRINTH_PROJECTS: |
-        moafks
-    ports: ["25565:25565"]
-    volumes: ["./data:/data"]
-```
+## Документация
 
-`moafks:2.2.1` закрепляет версию. Необязательные плагины добавляются в тот же список, по одному на строку: `placeholderapi`, `tab-was-taken` (TAB), `plan`. Чтобы брать Mo’Afks с GitHub, укажите `PLUGINS: https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar`.
+Руководство — в [вики](https://github.com/MairwunNx/moafks/wiki), на английском.
 
-### Вручную
+**Игрокам и владельцам серверов:** [Installation](https://github.com/MairwunNx/moafks/wiki/Installation) · [First steps](https://github.com/MairwunNx/moafks/wiki/First-steps) · [How AFK works](https://github.com/MairwunNx/moafks/wiki/How-AFK-works) · [Commands and permissions](https://github.com/MairwunNx/moafks/wiki/Commands-and-permissions) · [Configuration](https://github.com/MairwunNx/moafks/wiki/Configuration) · [Languages](https://github.com/MairwunNx/moafks/wiki/Languages) · [Integrations](https://github.com/MairwunNx/moafks/wiki/Integrations) · [FAQ](https://github.com/MairwunNx/moafks/wiki/FAQ)
 
-1. Скачайте jar с [Modrinth](https://modrinth.com/plugin/moafks), [Hangar](https://hangar.papermc.io/MairwunNx/MoAfks) или [GitHub](https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar).
-2. Положите его в `plugins/` и перезапустите сервер.
-
-### Первые шаги
-
-При первом запуске Mo’Afks создаёт `plugins/MoAfks/config.yml` и по файлу на каждый язык в `plugins/MoAfks/lang/`, а ещё скачивает базу стран. Зайдите и введите `/afk готовлю ужин`:
-
-```
-» Вы в режиме AFK: готовлю ужин. Когда вернётесь, двигайтесь или введите /afk.
-```
-
-Остальные прочитают `» Steve отошёл: готовлю ужин`, а у вашего ника в списке игроков появится метка [AFK]. Сделайте шаг, и все увидят `« Steve вернулся, его не было 12 мин.`
-
-Бездействующий игрок сам уходит в AFK через пять минут, а после 20 минут в AFK его кикает. Оба срока задаются в `config.yml`:
-
-```yaml
-auto:
-  seconds: 600    # 10 минут без дела — и в AFK
-limits:
-  enabled: false  # без кика, сколько бы игрок ни отсутствовал
-```
-
-Выполните `/moafks reload`, чтобы применить изменения.
-
-Переходите с 1.x? Ваш `config.yml` продолжит работать: списки `prevents` и `exit_triggers` превратятся в новые переключатели. Сообщения из него не переносятся — перенесите тексты в `lang/`.
-
-## Как работает AFK
-
-Игрок уходит в AFK командой `/afk [причина]` или после `auto.seconds` (пяти минут) без активности. Что считается активностью, задаёт `exit_triggers`: клавиши движения, прыжок, присед, бег, поворот камеры больше чем на 30 градусов, чат, команды, удары, клики, установка и ломание блоков, инвентари, выброс предметов, смена руки и слота. Любое из этих действий и выводит из AFK. Плагин следит за нажатыми клавишами, а не за положением игрока, так что AFK-бассейн или поршень никого не «разбудят».
-
-Пока игрок в AFK, переключатели в `protection` решают, от чего он защищён, а `gains` — может ли он собирать предметы и опыт. `anti_abuse` решает, когда уходить в AFK нельзя; бездействующий игрок в такой ситуации подождёт, пока она закончится. Когда игрок возвращается, высота падения и заморозка обнуляются, а если он стоит в лаве, огне, рыхлом снегу или в стене, плагин переносит его на безопасное место рядом.
-
-AFK не меняет ничего, что сохраняет игра. Игрок, который вышел из игры, пока был в AFK, зайдёт обратно не в AFK и без следов от него.
-
-Игрок в ванише остаётся невидимым. Плагины ваниша вроде SuperVanish, PremiumVanish и Essentials помечают таких игроков, и Mo’Afks читает эту метку. Остальные не узнают, что такой игрок ушёл в AFK или вернулся: не видят ни метки, ни частиц, не находят его ни в подстановках, ни в списках Plan. Защита и личные сообщения у самого игрока остаются.
-
-## Как выбирается язык
-
-Игрок, который выбрал язык командой `/moafks language <код>`, всегда получает его. Иначе плагин перебирает источники из `locales.sources` по порядку:
-
-1. **`ip`** — страна по IP-адресу игрока. `locales.countries` сопоставляет языкам коды стран: Россия, Беларусь и Казахстан получают русский, Испания и Латинская Америка — испанский, Бразилия и Португалия — португальский, Германия, Австрия и Швейцария — немецкий.
-2. **`client`** — язык, выбранный в игре, если для него есть файл в `lang/`.
-
-Если ничего не подошло, игрок получает `locales.default`. Проверить, какой язык достался игроку: `/moafks locale <игрок>`.
-
-Поиск страны не требует аккаунта и никуда не отправляет адреса. При первом запуске плагин скачивает бесплатную базу стран DB-IP (4 МБ, 8 МБ в распакованном виде) в `plugins/MoAfks/geoip/` и обновляет её раз в 30 дней. Игроки, которые заходят через прокси или ретранслятор, видны с его адресом и получают язык его страны.
-
-### Как добавить язык
-
-1. Скопируйте `lang/en.yml`, например, в `lang/it.yml` и переведите.
-2. Добавьте строку в `locales.countries`: `it: [ IT, SM, VA ]`.
-3. Выполните `/moafks reload`.
-
-Ключ, которого нет в файле языка, берётся из языка по умолчанию. Пустая строка отключает сообщение для этого языка.
-
-## Команды и права
-
-| Команда | Что делает |
-|---|---|
-| `/afk [причина]` | Уводит в AFK или возвращает из него |
-| `/moafks language [код\|auto]` | Задаёт язык, на котором Mo’Afks говорит с вами; `auto` снова отдаёт выбор плагину. Без аргумента показывает список языков, щелчок по языку выбирает его |
-| `/moafks reload` | Перечитывает `config.yml` и файлы языков; игроки в AFK остаются в AFK |
-| `/moafks list` | Показывает, кто в AFK и сколько времени |
-| `/moafks locale [игрок]` | Показывает язык игрока, его страну и язык игры |
-
-`/afk` требует `moafks.afk`, оно есть у всех. `/moafks language` доступна каждому игроку, а выбор хранится в данных игрока и переживает перезапуск. Остальным командам нужно `moafks.admin`, оно есть у операторов; `moafks.reload` из 1.x тоже работает.
-
-## PlaceholderAPI
-
-Если стоит [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi), Mo’Afks добавляет:
-
-| Подстановка | Показывает |
-|---|---|
-| `%moafks_afk%` | В AFK ли игрок, как true или false из настроек PlaceholderAPI |
-| `%moafks_afk_time%` | Секунды в текущем AFK, 0 вне AFK |
-| `%moafks_afk_total%` | Секунды в AFK за всё время, чтобы вычесть их из времени игры |
-| `%moafks_reason%` | Причину, указанную в `/afk`, или ничего |
-| `%moafks_tag%` | Метку из `effects.nickname.mark`, пока игрок в AFK, иначе ничего |
-
-Если список игроков оформляет TAB или другой плагин, он перезапишет метку Mo’Afks. Выключите `effects.nickname.enabled` и добавьте `%moafks_tag%` в префикс того плагина. В `groups.yml` у TAB это выглядит так:
-
-```yaml
-_DEFAULT_:
-  tabprefix: "%moafks_tag%"
-```
-
-И в обратную сторону: пишите в любом сообщении `<papi:name>`, и там появится `%name%` для игрока, о котором сообщение: `<papi:luckperms_prefix><player>`. Mo’Afks не ищет `%…%` в ваших текстах, так что знак процента остаётся знаком процента. Без PlaceholderAPI такие теги ничего не выводят.
-
-## MiniPlaceholders
-
-[MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) делает для MiniMessage то же, что PlaceholderAPI для текста с `%…%`. Если он стоит, Mo’Afks добавляет `<moafks_afk>`, `<moafks_afk_time>`, `<moafks_afk_total>`, `<moafks_reason>` и `<moafks_tag>` — те же значения, что и подстановки PlaceholderAPI выше, для игрока, которому они показаны.
-
-И в обратную сторону: любой тег MiniPlaceholders работает в сообщениях Mo’Afks и заполняется для игрока, о котором сообщение, например `<player_name>`. Слова самого игрока, вроде причины AFK, остаются простым текстом.
-
-## Plan
-
-Если стоит [Plan](https://modrinth.com/plugin/plan), Mo’Afks появляется на его страницах:
-
-- **Plugins Overview** на странице сервера: сколько игроков сейчас в AFK и таблица с ними — сколько и почему.
-- Вкладка **Plugins** на странице игрока: в AFK ли он сейчас и почему, сколько времени провёл в AFK за все сессии и сколько раз уходил в AFK.
-- В **таблице игроков** две колонки: «в AFK сейчас» и время в AFK. Plan считает время в AFK временем игры; вычтите из него число Mo’Afks, чтобы увидеть, сколько игрок играл на самом деле.
-
-Plan обновляет данные, когда игрок заходит или выходит, раз в несколько минут и всякий раз, когда кто-то уходит в AFK или возвращается. Число раз в AFK считается с версии 2.1.0, а время в AFK — с тех пор, как его считал Mo’Afks.
-
-## Сборка
-
-Нужен JDK 25; если его нет, Gradle скачает сам.
-
-```shell
-git clone https://github.com/MairwunNx/moafks
-cd moafks
-./gradlew build
-```
-
-Готовый jar — в `build/libs/`. Релизы собирает workflow «Release» на GitHub, версия передаётся ему на входе.
-
-## Стек
-
-- Kotlin и Gradle Kotlin DSL
-- Paper API 26.3 и Adventure MiniMessage
-- kotlinx-serialization с kaml для конфига
-- MaxMind DB reader для базы стран
-
-## Участие ИИ
-
-ИИ написал часть документации и часть кода: сначала сериализаторы и поиск безопасного места, потом переписанную версию 2.0 с языками по IP и разбор всех событий Paper. Сообщения коммитов тоже пишет ИИ по изменениям.
+**Разработчикам:** [Building from source](https://github.com/MairwunNx/moafks/wiki/Building-from-source) · [Development](https://github.com/MairwunNx/moafks/wiki/Development) · [Releasing](https://github.com/MairwunNx/moafks/wiki/Releasing)
 
 ## Связанные проекты
 
-[Allay Server](https://github.com/allay-ai/server) — 🛠️⚡ бэкенд Allay, ИИ-помощника для Minecraft, на OpenRouter.
-
-[Allay](https://github.com/allay-ai/minecraft) — 🪽 приводит Allay в игру: спрашивайте ИИ о чём угодно командой `/ask` прямо в чате. 🎮
-
-## От того же автора
-
-[Mo’Joins](https://github.com/MairwunNx/mojoins) — 🎉 приветствует игроков на их родном языке: строки о входе и выходе, приветствие новичкам, звуки и частицы.
-
-[Mo’Bosses](https://github.com/mairwunnx/mobosses) — 🏆 RPG-плагин, который превращает обычных мобов в эпических боссов, с продуманной системой прогрессии игрока. Каждый бой имеет значение, а каждый уровень открывает новые возможности. ⚔
-
-## Лицензия
-
-MIT, смотрите [LICENSE](https://github.com/MairwunNx/moafks/blob/master/LICENSE).
-
-## Благодарности
+- **[Moonlands](https://minecraft.mairwunnx.com)** — сервер со сложным выживанием, где работают все эти проекты.
+- **[WorldAPI](https://github.com/MairwunNx/minecraft-worldapi)** — REST и WebSocket API к миру, игрокам и статистике сервера Paper.
+- **[Minecraft MCP](https://github.com/MairwunNx/minecraft-mcp)** — даёт ИИ-клиенту читать сервер и управлять им через WorldAPI.
+- **[Allay](https://github.com/allay-ai/minecraft)** — ИИ-помощник в игре: спросите через `/ask` прямо в чате.
+- **[Allay Server](https://github.com/allay-ai/server)** — бэкенд Allay.
+- **[Mo’Joins](https://github.com/MairwunNx/mojoins)** — сообщения о входе и выходе на языке каждого игрока.
+- **[Mo’Bosses](https://github.com/MairwunNx/mobosses)** — монстры, которые появляются боссами с классами, способностями и добычей.
+- **[minecraft-exporter](https://github.com/MairwunNx/minecraft-exporter)** — метрики Prometheus из WorldAPI.
+- **[minecraft-grafana](https://github.com/MairwunNx/minecraft-grafana)** — дашборд Grafana для WorldAPI.
 
 [IP Geolocation by DB-IP](https://db-ip.com), лицензия CC BY 4.0.
 
