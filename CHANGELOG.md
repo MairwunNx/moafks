@@ -2,6 +2,10 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.2.1
+
+- Built against the Paper API for 26.3 build 205, the newest stable one.
+
 ## 2.2.0
 
 - 🗣️ **Each player picks their language.** `/moafks language` lists the languages by their own names, and a click picks one; `/moafks language <code>` sets it, and `/moafks language auto` hands the choice back to the plugin. The choice beats the IP and the game language, stays in the player’s data across restarts, and every player can use it. `/moafks` without `moafks.admin` shows the same list.
