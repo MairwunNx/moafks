@@ -19,11 +19,21 @@ AFK changes nothing the game saves. A player who quits while AFK comes back not 
 
 ## Install
 
-1. Put the jar in your server’s `plugins/` folder and restart the server.
-2. Edit `plugins/MoAfks/config.yml` and the messages in `plugins/MoAfks/lang/`.
-3. Run `/moafks reload`.
+Mo’Afks needs Paper 26.3 or a fork of it, like Purpur, on Java 25. PlaceholderAPI, MiniPlaceholders, TAB, and Plan are optional.
 
-Mo’Afks needs Paper 26.3 or a fork of it, like Purpur, on Java 25. A 1.x `config.yml` keeps working; move its messages to `lang/`.
+**With Docker (recommended).** In [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io), name it and the server fetches it:
+
+```yaml
+environment:
+  TYPE: PAPER
+  VERSION: "26.3"
+  MODRINTH_PROJECTS: |
+    moafks
+```
+
+**By hand.** Put the jar in `plugins/` and restart the server.
+
+On its first start Mo’Afks writes `plugins/MoAfks/config.yml` and the messages in `plugins/MoAfks/lang/`. Type `/afk making dinner`, and everyone else reads `» Steve stepped away: making dinner`. A 1.x `config.yml` keeps working; move its messages to `lang/`.
 
 ## How a player gets their language
 

@@ -1,5 +1,15 @@
 # Mo’Afks
 
+<p align="center">
+  <a href="https://modrinth.com/plugin/moafks"><img alt="Modrinth" src="https://img.shields.io/modrinth/dt/moafks?logo=modrinth&label=Modrinth&color=00AF5C"></a>
+  <a href="https://hangar.papermc.io/MairwunNx/MoAfks"><img alt="Hangar" src="https://img.shields.io/hangar/dt/MoAfks?label=Hangar&color=1E88E5"></a>
+  <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
+  <img alt="Paper 26.3" src="https://img.shields.io/badge/Paper-26.3-F7CF0D">
+  <img alt="Java 25" src="https://img.shields.io/badge/Java-25-E76F00">
+  <a href="https://github.com/MairwunNx/moafks/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/MairwunNx/moafks/build.yml?branch=master&label=build"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/MairwunNx/moafks"></a>
+</p>
+
 🛡️ **Mo’Afks** lets players on Paper servers step away without worry. Type `/afk`, or stand idle for a few minutes, and your character goes into a safe AFK mode: nothing hurts or pushes you, mobs leave you alone, and you don’t keep the night from passing. Move, and you’re back.
 
 [Русская версия](https://github.com/MairwunNx/moafks/blob/master/README.RU.md)
@@ -28,17 +38,55 @@ Mo’Afks runs on Moonlands, my hard survival server with friends. Come in, type
 
 Join at `minecraft.mairwunnx.com`. The site has the live map, player stats, and the hall of fame.
 
-## Requirements
-
-- Paper 26.3 or a fork of it, like Purpur
-- Java 25
-
 ## Install
 
-1. Download the jar from [Releases](https://github.com/MairwunNx/moafks/releases).
-2. Put it in your server’s `plugins/` folder and restart the server.
-3. Edit `plugins/MoAfks/config.yml` and the files in `plugins/MoAfks/lang/`.
-4. Run `/moafks reload`.
+Mo’Afks needs Paper 26.3 or a fork of it, like Purpur, on Java 25. PlaceholderAPI, MiniPlaceholders, TAB, and Plan are optional.
+
+### With Docker (recommended)
+
+If your server runs in [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io), it fetches Mo’Afks itself. Name it in `MODRINTH_PROJECTS`:
+
+```yaml
+services:
+  minecraft:
+    image: itzg/minecraft-server:java25
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: "26.3"
+      MODRINTH_PROJECTS: |
+        moafks
+    ports: ["25565:25565"]
+    volumes: ["./data:/data"]
+```
+
+`moafks:2.2.1` pins a version. The optional plugins go on the same list, one per line: `placeholderapi`, `tab-was-taken` (TAB), `plan`. To take Mo’Afks from GitHub instead, use `PLUGINS: https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar`.
+
+### By hand
+
+1. Download the jar from [Modrinth](https://modrinth.com/plugin/moafks), [Hangar](https://hangar.papermc.io/MairwunNx/MoAfks), or [GitHub](https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar).
+2. Put it in `plugins/` and restart the server.
+
+### First steps
+
+On its first start Mo’Afks writes `plugins/MoAfks/config.yml` and a file per language in `plugins/MoAfks/lang/`, and downloads the country database. Join and type `/afk making dinner`:
+
+```
+» You’re AFK: making dinner. Move or type /afk when you’re back.
+```
+
+Everyone else reads `» Steve stepped away: making dinner`, and your name gets an [AFK] mark in the player list. Take a step, and they read `« Steve is back after 12 min.`
+
+Idle players go AFK on their own after five minutes, and a kick comes after 20 minutes of AFK. Both live in `config.yml`:
+
+```yaml
+auto:
+  seconds: 600    # idle for 10 minutes, then AFK
+limits:
+  enabled: false  # no kick, however long they stay away
+```
+
+Run `/moafks reload` to apply it.
 
 Coming from 1.x? Your `config.yml` keeps working: its `prevents` and `exit_triggers` lists turn into the new switches. Its messages don’t carry over; move your texts to `lang/`.
 
@@ -95,7 +143,12 @@ With [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) installed, Mo�
 | `%moafks_reason%` | The reason given to `/afk`, or nothing |
 | `%moafks_tag%` | The `effects.nickname.mark` while AFK, otherwise nothing |
 
-If TAB or another plugin formats the player list, it overwrites Mo’Afks’ mark. Turn `effects.nickname.enabled` off and put `%moafks_tag%` into that plugin’s prefix instead.
+If TAB or another plugin formats the player list, it overwrites Mo’Afks’ mark. Turn `effects.nickname.enabled` off and put `%moafks_tag%` into that plugin’s prefix instead. In TAB’s `groups.yml` it looks like this:
+
+```yaml
+_DEFAULT_:
+  tabprefix: "%moafks_tag%"
+```
 
 The other way round, write `<papi:name>` in any message to show `%name%` for the player it’s about: `<papi:luckperms_prefix><player>`. Mo’Afks doesn’t look for `%…%` in your text, so a percent sign stays a percent sign. Without PlaceholderAPI the tags show nothing.
 

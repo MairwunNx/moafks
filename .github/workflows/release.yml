@@ -68,7 +68,10 @@ jobs:
       - name: Build and test
         run: ./gradlew build -PreleaseVersion="$VERSION"
       - name: Publish the GitHub release
-        run: gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Mo’Afks $VERSION" --notes-file "$NOTES" "build/libs/moafks-$VERSION.jar"
+        # moafks.jar too, so releases/latest/download/moafks.jar always fetches the newest one.
+        run: |
+          cp "build/libs/moafks-$VERSION.jar" build/libs/moafks.jar
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "Mo’Afks $VERSION" --notes-file "$NOTES" "build/libs/moafks-$VERSION.jar" build/libs/moafks.jar
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Publish to Modrinth

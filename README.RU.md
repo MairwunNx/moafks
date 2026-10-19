@@ -1,5 +1,15 @@
 # Mo’Afks
 
+<p align="center">
+  <a href="https://modrinth.com/plugin/moafks"><img alt="Modrinth" src="https://img.shields.io/modrinth/dt/moafks?logo=modrinth&label=Modrinth&color=00AF5C"></a>
+  <a href="https://hangar.papermc.io/MairwunNx/MoAfks"><img alt="Hangar" src="https://img.shields.io/hangar/dt/MoAfks?label=Hangar&color=1E88E5"></a>
+  <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
+  <img alt="Paper 26.3" src="https://img.shields.io/badge/Paper-26.3-F7CF0D">
+  <img alt="Java 25" src="https://img.shields.io/badge/Java-25-E76F00">
+  <a href="https://github.com/MairwunNx/moafks/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/MairwunNx/moafks/build.yml?branch=master&label=build"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/MairwunNx/moafks"></a>
+</p>
+
 🛡️ **Mo’Afks** позволяет игрокам на серверах Paper спокойно отойти от компьютера. Введите `/afk` или постойте без дела несколько минут, и ваш персонаж перейдёт в безопасный режим AFK: его ничто не ранит и не толкает, мобы его не трогают, а ночь проходит и без вас. Пошевелитесь — и вы снова в игре.
 
 [English version](https://github.com/MairwunNx/moafks/blob/master/README.md)
@@ -28,17 +38,55 @@ Mo’Afks работает на Moonlands — моём сервере со сл�
 
 Адрес для игроков из России — `ru.minecraft.mairwunnx.com`, для остальных — `minecraft.mairwunnx.com`. На сайте — живая карта, статистика игроков и зал славы.
 
-## Требования
-
-- Paper 26.3 или его форк, например Purpur
-- Java 25
-
 ## Установка
 
-1. Скачайте jar из [релизов](https://github.com/MairwunNx/moafks/releases).
-2. Положите его в папку `plugins/` сервера и перезапустите сервер.
-3. Настройте `plugins/MoAfks/config.yml` и файлы в `plugins/MoAfks/lang/`.
-4. Выполните `/moafks reload`.
+Mo’Afks нужен Paper 26.3 или его форк, например Purpur, на Java 25. PlaceholderAPI, MiniPlaceholders, TAB и Plan — по желанию.
+
+### Через Docker (рекомендуем)
+
+Если сервер работает в [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io), он сам скачает Mo’Afks. Достаточно назвать его в `MODRINTH_PROJECTS`:
+
+```yaml
+services:
+  minecraft:
+    image: itzg/minecraft-server:java25
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: "26.3"
+      MODRINTH_PROJECTS: |
+        moafks
+    ports: ["25565:25565"]
+    volumes: ["./data:/data"]
+```
+
+`moafks:2.2.1` закрепляет версию. Необязательные плагины добавляются в тот же список, по одному на строку: `placeholderapi`, `tab-was-taken` (TAB), `plan`. Чтобы брать Mo’Afks с GitHub, укажите `PLUGINS: https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar`.
+
+### Вручную
+
+1. Скачайте jar с [Modrinth](https://modrinth.com/plugin/moafks), [Hangar](https://hangar.papermc.io/MairwunNx/MoAfks) или [GitHub](https://github.com/MairwunNx/moafks/releases/latest/download/moafks.jar).
+2. Положите его в `plugins/` и перезапустите сервер.
+
+### Первые шаги
+
+При первом запуске Mo’Afks создаёт `plugins/MoAfks/config.yml` и по файлу на каждый язык в `plugins/MoAfks/lang/`, а ещё скачивает базу стран. Зайдите и введите `/afk готовлю ужин`:
+
+```
+» Вы в режиме AFK: готовлю ужин. Когда вернётесь, двигайтесь или введите /afk.
+```
+
+Остальные прочитают `» Steve отошёл: готовлю ужин`, а у вашего ника в списке игроков появится метка [AFK]. Сделайте шаг, и все увидят `« Steve вернулся, его не было 12 мин.`
+
+Бездействующий игрок сам уходит в AFK через пять минут, а после 20 минут в AFK его кикает. Оба срока задаются в `config.yml`:
+
+```yaml
+auto:
+  seconds: 600    # 10 минут без дела — и в AFK
+limits:
+  enabled: false  # без кика, сколько бы игрок ни отсутствовал
+```
+
+Выполните `/moafks reload`, чтобы применить изменения.
 
 Переходите с 1.x? Ваш `config.yml` продолжит работать: списки `prevents` и `exit_triggers` превратятся в новые переключатели. Сообщения из него не переносятся — перенесите тексты в `lang/`.
 
@@ -95,7 +143,12 @@ AFK не меняет ничего, что сохраняет игра. Игро
 | `%moafks_reason%` | Причину, указанную в `/afk`, или ничего |
 | `%moafks_tag%` | Метку из `effects.nickname.mark`, пока игрок в AFK, иначе ничего |
 
-Если список игроков оформляет TAB или другой плагин, он перезапишет метку Mo’Afks. Выключите `effects.nickname.enabled` и добавьте `%moafks_tag%` в префикс того плагина.
+Если список игроков оформляет TAB или другой плагин, он перезапишет метку Mo’Afks. Выключите `effects.nickname.enabled` и добавьте `%moafks_tag%` в префикс того плагина. В `groups.yml` у TAB это выглядит так:
+
+```yaml
+_DEFAULT_:
+  tabprefix: "%moafks_tag%"
+```
 
 И в обратную сторону: пишите в любом сообщении `<papi:name>`, и там появится `%name%` для игрока, о котором сообщение: `<papi:luckperms_prefix><player>`. Mo’Afks не ищет `%…%` в ваших текстах, так что знак процента остаётся знаком процента. Без PlaceholderAPI такие теги ничего не выводят.
 
