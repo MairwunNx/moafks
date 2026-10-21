@@ -171,6 +171,16 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 
 The project is `moafks` (id `6d2YvMjy`), MIT. The “Release” workflow has a `modrinth` switch, off by default: on, it runs `./gradlew modrinth`, which uploads the jar as a version and syncs MODRINTH.md as the description. MODRINTH.md is for server owners: the pitch, “What you get”, “Get started”, links into the wiki, and Related projects; no build or stack, and no Moonlands banner. The store page changes only with the next release that runs `modrinth`. A change to what the plugin does goes in README.md, README.RU.md, MODRINTH.md, and the wiki. It uses the `MODRINTH_TOKEN` secret; locally the same token is in `~/.secrets/cloud.env`. The icon is `media/icon.png`. Never put the token in the repo.
 
+## Platforms
+
+How the family ships a project to more than one platform. A project that builds only for Paper keeps its jar's present name until it gains a second platform, so links and Moonlands' `jars.txt` keep working.
+
+- **Modules.** One Gradle module per platform, `paper/`, `fabric/`, `neoforge/`, next to a `core/` module with what they share: the rules as plain Kotlin without game imports, data, and assets. Every module builds from one version, and one release ships them all.
+- **Jars.** `<name>-paper-X.Y.Z.jar`, `<name>-fabric-X.Y.Z.jar`, and `<name>-neoforge-X.Y.Z.jar`, each attached again without the version, so `releases/latest/download/<name>-<platform>.jar` always fetches the newest.
+- **Modrinth.** One project for every platform. Each platform is its own version, numbered `X.Y.Z+paper`, `X.Y.Z+fabric`, or `X.Y.Z+neoforge`, with its own loaders and dependencies; a mod's version says it runs on the client and the server.
+- **Hangar.** Paper only, numbered `X.Y.Z`.
+- **Moonlands** runs the Paper jar only.
+
 ## Commits
 
 Short one-line imperative English messages, one logical change per commit: “Let AFK players skip the night”.
