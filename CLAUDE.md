@@ -164,12 +164,16 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 ## Releasing and Moonlands
 
 1. Add a `## X.Y.Z` section to CHANGELOG.md, written for server owners, and push it. After a change that reaches what the project ships, add it to CHANGELOG.md in the same push: under the topmost “## X.Y.Z” section while that version isn't released (`gh release view vX.Y.Z` fails), or under a new section with the next version: patch for fixes, minor for features, major for breaking changes. A release then needs only the workflow, and the workflow runs only when the owner asks.
-2. Run the “Release” workflow with the new version: `gh workflow run release.yml -R MairwunNx/moafks -f version=X.Y.Z -f modrinth=true -f hangar=true`. Its `changelog` field overrides the CHANGELOG.md section; one of the two must be there. It builds with `-PreleaseVersion`, tags `vX.Y.Z`, and attaches `moafks-X.Y.Z.jar` to a GitHub release. Nothing in the repo holds the version; local and CI builds are `dev`.
+2. Run the “Release” workflow with the new version: `gh workflow run release.yml -R MairwunNx/moafks -f version=X.Y.Z -f modrinth=true -f hangar=true -f curseforge=true`. Its `changelog` field overrides the CHANGELOG.md section; one of the two must be there. It builds with `-PreleaseVersion`, tags `vX.Y.Z`, and attaches `moafks-X.Y.Z.jar` to a GitHub release. Nothing in the repo holds the version; local and CI builds are `dev`.
 3. To put it on Moonlands, point the Mo’Afks line in `minecraft/extras/jars.txt` (MairwunNx/minecraft) at the release jar, push, and deploy as its CLAUDE.md says, which also says when a restart may happen without asking.
 
 ## Modrinth
 
 The project is `moafks` (id `6d2YvMjy`), MIT. The “Release” workflow has a `modrinth` switch, off by default: on, it runs `./gradlew modrinth`, which uploads the jar as a version and syncs MODRINTH.md as the description. MODRINTH.md is for server owners: the pitch, “What you get”, “Get started”, links into the wiki, and Related projects; no build or stack, and no Moonlands banner. The store page changes only with the next release that runs `modrinth`. A change to what the plugin does goes in README.md, README.RU.md, MODRINTH.md, and the wiki. It uses the `MODRINTH_TOKEN` secret; locally the same token is in `~/.secrets/cloud.env`. The icon is `media/icon.png`. Never put the token in the repo.
+
+## CurseForge
+
+The plugin is project `1766155` (Bukkit Plugins, on dev.bukkit.org), MIT, created by the owner on authors.curseforge.com on 2026-10-25: CurseForge has no API to create a project. The “Release” workflow's `curseforge` switch, off by default, runs `scripts/curseforge.py` for each jar after the build; it takes the game version from the build files and looks up CurseForge's ids by name. Settings, the icon, and the page are edited on the site; the page is MODRINTH.md. The token is the `CURSEFORGE_TOKEN` secret, also in `~/.secrets/cloud.env`; never put it in the repo.
 
 ## Platforms
 
@@ -179,6 +183,7 @@ How the family ships a project to more than one platform. A project that builds 
 - **Jars.** `<name>-paper-X.Y.Z.jar`, `<name>-fabric-X.Y.Z.jar`, and `<name>-neoforge-X.Y.Z.jar`, each attached again without the version, so `releases/latest/download/<name>-<platform>.jar` always fetches the newest.
 - **Modrinth.** One project for every platform. Each platform is its own version, numbered `X.Y.Z+paper`, `X.Y.Z+fabric`, or `X.Y.Z+neoforge`, with its own loaders and dependencies; a mod's version says it runs on the client and the server.
 - **Hangar.** Paper only, numbered `X.Y.Z`.
+- **CurseForge.** Two projects, since one holds a single class: Paper's jar in a Bukkit Plugins project, numbered `X.Y.Z`, and both mods as files of one Mods project, “X.Y.Z for Fabric” and “X.Y.Z for NeoForge”. A Paper-only project has the plugin project alone.
 - **Moonlands** runs the Paper jar only.
 
 ## Commits

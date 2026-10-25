@@ -18,6 +18,10 @@ on:
         description: "Also publish to Hangar (needs the HANGAR_TOKEN secret)"
         type: boolean
         default: false
+      curseforge:
+        description: "Also publish to CurseForge (needs the CURSEFORGE_TOKEN secret)"
+        type: boolean
+        default: false
       moonlands:
         description: "Ship the release to Moonlands (needs the FAMILY_ACTIONS_TOKEN secret)"
         type: boolean
@@ -85,6 +89,15 @@ jobs:
         run: ./gradlew publishPluginPublicationToHangar -PreleaseVersion="$VERSION" -PchangelogFile="$NOTES" --no-configuration-cache
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_TOKEN }}
+
+      - name: Publish to CurseForge
+        if: inputs.curseforge
+        # The plugin project lives on dev.bukkit.org; the game version comes from the build, as Modrinth's does.
+        run: |
+          game=$(sed -nE 's/.*gameVersions\.addAll\("([^"]+)".*/\1/p' build.gradle.kts)
+          python3 -I scripts/curseforge.py "build/libs/moafks-$VERSION.jar" --project 1766155 --kind plugin --game "$game" --name "Mo’Afks $VERSION" --notes "$NOTES"
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
 
   deploy:
     needs: release
