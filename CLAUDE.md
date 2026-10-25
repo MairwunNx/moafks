@@ -173,7 +173,7 @@ The project is `moafks` (id `6d2YvMjy`), MIT. The “Release” workflow has a `
 
 ## CurseForge
 
-The plugin is project `1766155` (Bukkit Plugins, on dev.bukkit.org), MIT, created by the owner on authors.curseforge.com on 2026-10-25: CurseForge has no API to create a project. The “Release” workflow's `curseforge` switch, off by default, runs `scripts/curseforge.py` for each jar after the build; it takes the game version from the build files and looks up CurseForge's ids by name. Settings, the icon, and the page are edited on the site; the page is MODRINTH.md. The token is the `CURSEFORGE_TOKEN` secret, also in `~/.secrets/cloud.env`; never put it in the repo.
+The plugin is project `1766155` (Bukkit Plugins, on dev.bukkit.org), MIT, created by the owner on authors.curseforge.com on 2026-10-25: CurseForge has no API to create a project. The “Release” workflow's `curseforge` switch, off by default, runs `scripts/curseforge.py` for each jar after the build; it takes the game version from the build files and looks up CurseForge's ids by name. The step may fail without failing the release, so the deploy to Moonlands still runs: when CurseForge doesn't know a new game version yet, upload the jars later with the same script, as the step does. Settings, the icon, and the page are edited on the site; the page is MODRINTH.md. The token is the `CURSEFORGE_TOKEN` secret, also in `~/.secrets/cloud.env`; never put it in the repo.
 
 ## Platforms
 

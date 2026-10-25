@@ -92,6 +92,9 @@ jobs:
 
       - name: Publish to CurseForge
         if: inputs.curseforge
+        # CurseForge adds a new game version a little after Mojang; until then this step fails alone, so the
+        # release still ships to Moonlands. The autopilot checks every store and uploads what's missing by hand.
+        continue-on-error: true
         # The plugin project lives on dev.bukkit.org; the game version comes from the build, as Modrinth's does.
         run: |
           game=$(sed -nE 's/.*gameVersions\.addAll\("([^"]+)".*/\1/p' build.gradle.kts)
