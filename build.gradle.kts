@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-  compileOnly("io.papermc.paper:paper-api:26.3.build.205-stable")
+  compileOnly("io.papermc.paper:paper-api:26.3.build.223-stable")
   compileOnly("me.clip:placeholderapi:2.12.3")
   compileOnly("com.djrapitops:plan-api:5.9-R1.3")
   compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.2.0")
@@ -30,7 +30,7 @@ dependencies {
   implementation("com.charleskorn.kaml:kaml:0.104.0")
   implementation("com.maxmind.db:maxmind-db:4.2.0")
 
-  testImplementation("io.papermc.paper:paper-api:26.3.build.205-stable")
+  testImplementation("io.papermc.paper:paper-api:26.3.build.223-stable")
   testImplementation(kotlin("test"))
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
