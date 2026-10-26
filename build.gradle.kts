@@ -26,7 +26,7 @@ dependencies {
   compileOnly("com.djrapitops:plan-api:5.9-R1.3")
   compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.2.0")
   compileOnly("com.github.NEZNAMY:TAB-API:6.1.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.12.0")
   implementation("com.charleskorn.kaml:kaml:0.104.0")
   implementation("com.maxmind.db:maxmind-db:4.2.0")
 
