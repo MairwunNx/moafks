@@ -58,4 +58,10 @@ The [wiki](https://github.com/MairwunNx/moafks/wiki) has the manual.
 
 [IP Geolocation by DB-IP](https://db-ip.com), licensed under CC BY 4.0.
 
+## Content disclosures
+
+- 🤖 **AI-generated code.** AI agents wrote much of the code.
+- 🌍 **Languages by country** come from a DB-IP database the server downloads, and the lookup stays on the server.
+- No generative AI, telemetry, paid features, or ads.
+
 > 🫡 Made by Pavel Erokhin (Павел Ерохин), aka mairwunnx.
