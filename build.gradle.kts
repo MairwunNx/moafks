@@ -66,7 +66,9 @@ tasks.shadowJar {
 tasks.jar { enabled = false }
 tasks.assemble { dependsOn(tasks.shadowJar) }
 
-// `./gradlew modrinth` with MODRINTH_TOKEN set; the release workflow runs it when asked to.
+// `./gradlew modrinthSyncBody` with MODRINTH_TOKEN set syncs the description; the jar goes up through scripts/modrinth.py,
+// which reads gameVersions from here. `./gradlew modrinth` would upload a version without an environment, which
+// Modrinth refuses while the project is in review.
 modrinth {
   token = providers.environmentVariable("MODRINTH_TOKEN")
   projectId = "moafks"

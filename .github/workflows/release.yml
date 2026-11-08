@@ -80,8 +80,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Publish to Modrinth
         if: inputs.modrinth
-        # Minotaur reads the project while it runs, which the configuration cache doesn't allow.
-        run: ./gradlew modrinth -PreleaseVersion="$VERSION" -PchangelogFile="$NOTES" --no-configuration-cache
+        # The description through Minotaur, which reads the project while it runs, so not with the configuration
+        # cache; the jar through Modrinth's v3 API, which takes the server-only environment Minotaur can't set and
+        # Modrinth refuses a version without while the project is in review.
+        run: |
+          ./gradlew modrinthSyncBody --no-configuration-cache
+          python3 -I scripts/modrinth.py --version "$VERSION" --notes "$NOTES"
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
       - name: Publish to Hangar
