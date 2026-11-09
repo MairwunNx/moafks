@@ -31,7 +31,7 @@ dependencies {
   implementation("com.maxmind.db:maxmind-db:4.2.0")
   implementation("org.bstats:bstats-bukkit:3.2.1")
   // WorldAPI brings these classes; Mo’Afks only compiles against them.
-  compileOnly("com.mairwunnx:worldapi-expansion:2.0.0")
+  compileOnly("com.mairwunnx:worldapi-expansion:2.1.0")
   // So does Allay, the AI helper, for its expansion API.
   compileOnly("chat.allay:allay-expansion:2.0.0")
 

@@ -6,6 +6,7 @@ The “Release” workflow takes the notes for a version from its section here, 
 
 - 🤖 **Allay.** With [Allay](https://github.com/allay-ai/minecraft) 6.33 or newer installed, players can ask the AI helper who is AFK and since when, what this server’s AFK rules are, and to put them AFK, with a reason if they like. Anti-abuse still applies: in a fight or while falling, Allay says why not and when to try again. AFK reasons stay out of answers everyone reads (`/askall`), and vanished players never show. With an older Allay the plugin runs as before, and the log says in one line to update Allay.
 - Turning the camera now counts from where it pointed when AFK began, so a small turn right after `/afk` no longer brings a player back.
+- 🌐 **AFK on request through WorldAPI.** With WorldAPI 4.6.0 or newer, a client with `players:moderate`, like the MCP server, can put an online player into AFK with `POST /extensions/moafks/players/{player}/afk` (an optional `reason` in the body) and take them out with `DELETE` on the same path. Anti-abuse still applies, and WorldAPI’s audit log keeps every call. On WorldAPI 4.5 the numbers work as before, and the log asks in one line for 4.6.0 for these two.
 
 ## 2.4.0
 
