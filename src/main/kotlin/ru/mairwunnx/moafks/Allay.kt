@@ -57,15 +57,6 @@ object AllayAnswers {
 
   fun endsOn(triggers: Settings.ExitTriggers): List<String> = Trigger.entries.filter { it.isOn(triggers) }.map { it.name.lowercase() }
 
-  /** Why anti-abuse refused, in words the model can pass on. */
-  fun refusal(danger: Danger, rules: Settings.AntiAbuse): String = when (danger) {
-    Danger.COMBAT -> "the asker took or dealt damage in the last ${rules.combatSeconds} seconds: they can go AFK once the fight is that long behind them"
-    Danger.FALLING -> "the asker is falling or gliding: they can go AFK once they stand on the ground"
-    Danger.BURNING -> "the asker is on fire or freezing: they can go AFK once it's out"
-    Danger.LIQUID -> "the asker is in water or lava: they can go AFK on dry land"
-    Danger.TARGETED -> "a mob nearby is after the asker: they can go AFK once it's gone or dead"
-  }
-
   private fun protections(on: Settings.Protection) = listOfNotNull(
     "no damage but /kill, no catching fire, air doesn't run out".takeIf { on.damage },
     "falling into the void takes them back to where they went AFK".takeIf { on.void },
@@ -155,7 +146,7 @@ object AfksTools : Expansion("moafks", "Mo’Afks") {
     val afk = plugin.afk
     val settings = plugin.settings
     afk.state(player.uniqueId)?.let { return went(settings, true, it.reason) }
-    afk.refusal(player)?.let { throw ToolException(AllayAnswers.refusal(it, settings.antiAbuse)) }
+    afk.refusal(player)?.let { throw ToolException(Rules.refusal(it, settings.antiAbuse)) }
     if (!afk.enter(player, manual = true, reason = reason)) throw ToolException("Mo’Afks didn't let the asker go AFK right now")
     return went(settings, false, reason)
   }

@@ -102,6 +102,15 @@ object Rules {
     else -> null
   }
 
+  /** Why [danger] keeps a player from going AFK, in English for Allay's model and WorldAPI's clients, with the way out. */
+  fun refusal(danger: Danger, rules: Settings.AntiAbuse): String = when (danger) {
+    Danger.COMBAT -> "the player took or dealt damage in the last ${rules.combatSeconds} seconds: they can go AFK once the fight is that long behind them"
+    Danger.FALLING -> "the player is falling or gliding: they can go AFK once they stand on the ground"
+    Danger.BURNING -> "the player is on fire or freezing: they can go AFK once it's out"
+    Danger.LIQUID -> "the player is in water or lava: they can go AFK on dry land"
+    Danger.TARGETED -> "a mob nearby is after the player: they can go AFK once it's gone or dead"
+  }
+
   /**
    * The warning to show with [remaining] seconds left, or null. Every mark passed so far goes into
    * [shown], so a skipped second or a reload doesn't fire several warnings at once.

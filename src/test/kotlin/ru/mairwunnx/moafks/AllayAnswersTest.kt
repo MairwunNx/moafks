@@ -38,10 +38,4 @@ class AllayAnswersTest {
     assertNull(rules.lookDegrees)
     assertTrue("chat" !in rules.endsOn && "look" !in rules.endsOn && "command" in rules.endsOn)
   }
-
-  @Test fun `every refusal names the asker's way out`() {
-    val rules = Settings.AntiAbuse(combatSeconds = 20)
-    Danger.entries.forEach { assertTrue(AllayAnswers.refusal(it, rules).contains("AFK"), it.name) }
-    assertTrue("20 seconds" in AllayAnswers.refusal(Danger.COMBAT, rules))
-  }
 }

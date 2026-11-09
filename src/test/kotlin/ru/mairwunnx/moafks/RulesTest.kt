@@ -30,6 +30,12 @@ class RulesTest {
     assertTrue(Trigger.entries.filter { it != Trigger.CHAT && it != Trigger.HELD_SLOT }.all { it.isOn(triggers) })
   }
 
+  @Test fun `every refusal names the way out`() {
+    val rules = Settings.AntiAbuse(combatSeconds = 20)
+    Danger.entries.forEach { assertTrue(Rules.refusal(it, rules).contains("can go AFK"), it.name) }
+    assertTrue("20 seconds" in Rules.refusal(Danger.COMBAT, rules))
+  }
+
   @Test fun `the camera counts past the threshold, across the yaw wrap`() {
     assertFalse(Rules.turned(10f, 0f, 30f, 10f, 30f))
     assertTrue(Rules.turned(10f, 0f, 50f, 0f, 30f))
