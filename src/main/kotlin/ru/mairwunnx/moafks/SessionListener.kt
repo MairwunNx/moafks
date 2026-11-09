@@ -30,7 +30,10 @@ class SessionListener(private val plugin: MoAfksPlugin) : Listener {
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
-  fun onJoin(event: PlayerJoinEvent) = plugin.afk.joined(event.player)
+  fun onJoin(event: PlayerJoinEvent) {
+    plugin.afk.joined(event.player)
+    plugin.messenger.counted(event.player)
+  }
 
   /** A kick ends in a quit too. */
   @EventHandler(priority = EventPriority.MONITOR)

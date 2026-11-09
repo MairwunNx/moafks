@@ -56,11 +56,13 @@ class MoAfksCommand(private val plugin: MoAfksPlugin) : BasicCommand {
     }
     if (typed.equals("auto", ignoreCase = true)) {
       messenger.choose(player, null)
+      messenger.counted(player)
       return messenger.send(player, Message.LANGUAGE_AUTO, Placeholder.unparsed("language", Languages.name(messenger.languageOf(player))))
     }
     val code = plugin.resolver.match(typed)
       ?: return messenger.send(player, Message.LANGUAGE_UNKNOWN, Placeholder.unparsed("code", typed), languages(messenger.languageOf(player)))
     messenger.choose(player, code)
+    messenger.counted(player)
     messenger.send(player, Message.LANGUAGE_SET, Placeholder.unparsed("language", Languages.name(code)))
   }
 
