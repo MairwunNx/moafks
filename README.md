@@ -28,7 +28,7 @@ Mo’Afks runs on Moonlands, my hard survival server with friends. Join at `mine
 - 🔙 **Coming back is up to the player.** A key press, a click, or a chat line brings them back. Water and pistons don’t. A dangerous spot moves them somewhere safe.
 - 🌍 **Every player reads their own language,** picked by IP or by their own choice. English, Russian, Spanish, Portuguese, and German come bundled.
 - ✨ **Everyone sees who’s away:** a ring of particles and an [AFK] mark. Add a time limit with a kick if you want one. Vanished players stay hidden.
-- 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, and WorldAPI if you have them, a Grafana dashboard, and `/moafks reload` without a restart.
+- 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, WorldAPI, and Allay if you have them, a Grafana dashboard, and `/moafks reload` without a restart.
 
 ## Get started
 
