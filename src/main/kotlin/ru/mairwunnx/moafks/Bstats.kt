@@ -47,7 +47,7 @@ class Bstats(private val plugin: MoAfksPlugin) {
   }
 
   companion object {
-    /** The plugin's id on bstats.org; 0 keeps bStats off. */
-    const val BSTATS_ID = 0
+    /** The plugin's id on bstats.org, at bstats.org/plugin/bukkit/MoAfks/35228; 0 keeps bStats off. */
+    const val BSTATS_ID = 35228
   }
 }
