@@ -5,7 +5,7 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 ## Talking to the owner
 
 - Reply in Russian, address the owner as «вы». Quotes «ёлочки», nested „лапки“, an em dash with spaces « — ».
-- Code, comments, commit messages, README.md, and the English language file are in English: curly quotes, an em dash without spaces or an en dash with spaces, never a hyphen as a dash.
+- Code, comments, commit messages, README.md, and the English language file are in English: curly quotes, an en dash with spaces (never an em dash glued to the words or a hyphen as a dash), and no semicolon between clauses: a full stop, a comma, or a colon instead.
 - README.RU.md and `lang/ru.yml` follow Russian typography; `lang/de.yml` uses „…“, an en dash with spaces, and „du“. Change both READMEs and MODRINTH.md together. A change to commands, permissions, config keys, placeholders, or behavior goes into the wiki page that covers it; the READMEs and MODRINTH.md don't repeat the manual, and they carry no License, Build, Stack, or AI sections.
 
 ## How it fits together
