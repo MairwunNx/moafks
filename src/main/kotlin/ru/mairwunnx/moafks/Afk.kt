@@ -32,13 +32,11 @@ class AfkState(val name: String, val reason: String?, val manual: Boolean, val s
 /**
  * Who is AFK, and everything that goes with it: entering and leaving, the idle timer, the time
  * limit, and putting the player back as they were. State is keyed by UUID; Bukkit calls happen on
- * the server thread. [states], [totals], and [spells] are concurrent maps because PlaceholderAPI and
- * Plan read them from their own threads.
+ * the server thread. [states] is a concurrent map, and the totals live in [AfkStats], because
+ * PlaceholderAPI and Plan read them from their own threads.
  */
 class Afk(private val plugin: MoAfksPlugin) {
   private val states = ConcurrentHashMap<UUID, AfkState>()
-  private val totals = ConcurrentHashMap<UUID, Long>()
-  private val spells = ConcurrentHashMap<UUID, Long>()
   private val activity = HashMap<UUID, Activity>()
   private val combat = HashMap<UUID, Long>()
   private val totalKey = NamespacedKey(plugin, "afk_seconds")
@@ -47,6 +45,7 @@ class Afk(private val plugin: MoAfksPlugin) {
   private val settings get() = plugin.settings
   private val effects get() = plugin.effects
   private val messenger get() = plugin.messenger
+  private val stats get() = plugin.stats
 
   private class Activity(var at: Long, var yaw: Float, var pitch: Float)
 
@@ -60,13 +59,40 @@ class Afk(private val plugin: MoAfksPlugin) {
   fun afk(): List<Pair<Player, AfkState>> = states.mapNotNull { (id, state) -> Bukkit.getPlayer(id)?.let { it to state } }
 
   /** Seconds AFK across all sessions, this spell included. */
-  fun totalSeconds(id: UUID): Long = (totals[id] ?: 0L) + (states[id]?.seconds() ?: 0L)
+  fun totalSeconds(id: UUID): Long = (stats[id]?.seconds ?: 0L) + (states[id]?.seconds() ?: 0L)
 
   /** How many times the player went AFK, this spell included. */
-  fun spells(id: UUID): Long = (spells[id] ?: 0L) + (if (states.containsKey(id)) 1 else 0)
+  fun spells(id: UUID): Long = (stats[id]?.spells ?: 0L) + (if (states.containsKey(id)) 1 else 0)
 
-  /** Whether the totals of this player are loaded: they played since the server started. */
-  fun known(id: UUID) = totals.containsKey(id)
+  /** How many times the player went AFK with /afk since 2.3.0, this spell included. */
+  fun manualSpells(id: UUID): Long = (stats[id]?.manual ?: 0L) + (if (states[id]?.manual == true) 1 else 0)
+
+  /** How many times the player went AFK by idling since 2.3.0, this spell included. */
+  fun autoSpells(id: UUID): Long = (stats[id]?.auto ?: 0L) + (if (states[id]?.manual == false) 1 else 0)
+
+  /** Whether Mo’Afks knows this player's totals: they played since 2.3.0, or since the server started. */
+  fun known(id: UUID) = stats[id] != null
+
+  /** Every player's totals with the spells going on now, for boards and the server's sums. Safe from any thread. */
+  fun records(): Map<UUID, AfkRecord> {
+    val now = System.currentTimeMillis()
+    val all = stats.all().toMutableMap()
+    states.forEach { (id, state) ->
+      // A vanished player's spell counts once it ends, so nobody learns it's going on.
+      if (plugin.vanish.hidden(id)) return@forEach
+      val record = all[id] ?: AfkRecord(name = state.name)
+      all[id] = record.copy(
+        seconds = record.seconds + state.seconds(now),
+        spells = record.spells + 1,
+        manual = record.manual + if (state.manual) 1 else 0,
+        auto = record.auto + if (state.manual) 0 else 1,
+      )
+    }
+    return all
+  }
+
+  /** Everyone AFK now whom others may see, with their UUIDs; safe from any thread. */
+  fun visibleStates(): List<Pair<UUID, AfkState>> = states.filterKeys { !plugin.vanish.hidden(it) }.toList()
 
   /** Everyone AFK now whom others may see; safe from any thread. */
   fun visible(): List<AfkState> = states.filterKeys { !plugin.vanish.hidden(it) }.values.toList()
@@ -74,13 +100,13 @@ class Afk(private val plugin: MoAfksPlugin) {
   fun joined(player: Player) {
     plugin.vanish.check(player)
     touch(player)
-    totals[player.uniqueId] = player.persistentDataContainer.getOrDefault(totalKey, PersistentDataType.LONG, 0L)
-    spells[player.uniqueId] = player.persistentDataContainer.getOrDefault(spellsKey, PersistentDataType.LONG, 0L)
+    val data = player.persistentDataContainer
+    stats.seed(player.uniqueId, player.name, data.getOrDefault(totalKey, PersistentDataType.LONG, 0L), data.getOrDefault(spellsKey, PersistentDataType.LONG, 0L))
   }
 
   /**
-   * The player quit or got kicked: put everything back and forget them. Their totals stay, two
-   * numbers a player, because Plan reads them after the quit.
+   * The player quit or got kicked: put everything back and forget them. Their totals stay in
+   * [AfkStats], because Plan and WorldAPI read them after the quit.
    */
   fun left(player: Player) {
     exit(player, quiet = true)
@@ -154,8 +180,9 @@ class Afk(private val plugin: MoAfksPlugin) {
   fun exit(player: Player, quiet: Boolean) {
     val state = states.remove(player.uniqueId) ?: return
     restore(player, state)
-    val seconds = state.seconds()
-    addTotal(player, seconds)
+    val now = System.currentTimeMillis()
+    val seconds = state.seconds(now)
+    addTotal(player, seconds, state.manual)
     plugin.analytics?.changed(player)
     touch(player)
     if (quiet) return
@@ -310,15 +337,15 @@ class Afk(private val plugin: MoAfksPlugin) {
   // Paper turns the name into a vanilla component and back, which may not compare equal; the text does.
   private fun plain(component: Component) = PlainTextComponentSerializer.plainText().serialize(component)
 
-  /** Adds a finished spell to the player's totals, in memory and in their saved data. */
-  private fun addTotal(player: Player, seconds: Long) {
+  /** Adds a finished spell to the player's totals, in `stats.yml` and in their saved data. */
+  private fun addTotal(player: Player, seconds: Long, manual: Boolean) {
     val data = player.persistentDataContainer
-    val total = (totals[player.uniqueId] ?: data.getOrDefault(totalKey, PersistentDataType.LONG, 0L)) + seconds
-    val count = (spells[player.uniqueId] ?: data.getOrDefault(spellsKey, PersistentDataType.LONG, 0L)) + 1
-    totals[player.uniqueId] = total
-    spells[player.uniqueId] = count
-    data.set(totalKey, PersistentDataType.LONG, total)
-    data.set(spellsKey, PersistentDataType.LONG, count)
+    if (stats[player.uniqueId] == null) {
+      stats.seed(player.uniqueId, player.name, data.getOrDefault(totalKey, PersistentDataType.LONG, 0L), data.getOrDefault(spellsKey, PersistentDataType.LONG, 0L))
+    }
+    val record = stats.add(player.uniqueId, player.name, seconds, manual)
+    data.set(totalKey, PersistentDataType.LONG, record.seconds)
+    data.set(spellsKey, PersistentDataType.LONG, record.spells)
   }
 
   private fun moveToSafety(player: Player) {

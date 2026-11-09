@@ -14,6 +14,7 @@ class MoAfksPlugin : JavaPlugin() {
   val geoIp by lazy { GeoIp(dataFolder.resolve("geoip"), log) }
   val messenger = Messenger(this)
   val vanish = Vanish()
+  val stats by lazy { AfkStats(dataFolder.resolve("stats.yml"), log) }
   lateinit var afk: Afk; private set
   lateinit var sessions: SessionListener; private set
 
@@ -24,6 +25,7 @@ class MoAfksPlugin : JavaPlugin() {
   var analytics: Analytics? = null; private set
 
   override fun onEnable() {
+    stats.load()
     if (!reload()) log.warn("Started with the default settings; fix config.yml and run /moafks reload")
     afk = Afk(this)
     sessions = SessionListener(this)
@@ -38,6 +40,7 @@ class MoAfksPlugin : JavaPlugin() {
     afk.start()
     tasks += server.scheduler.runTaskTimer(this, Runnable { afk.tick() }, 20L, 20L)
     tasks += server.scheduler.runTaskTimer(this, Runnable { afk.particles() }, 40L, 40L)
+    tasks += server.scheduler.runTaskTimerAsynchronously(this, Runnable { stats.save() }, SAVE_TICKS, SAVE_TICKS)
 
     if (Placeholders.available) {
       expansion = runCatching { Placeholders.register(this) }.onFailure { log.warn("Can't register %moafks_…% with PlaceholderAPI: ${it.message}") }.getOrNull()
@@ -62,6 +65,7 @@ class MoAfksPlugin : JavaPlugin() {
     analytics?.close()
     analytics = null
     if (::afk.isInitialized) afk.shutdown()
+    stats.save()
     expansion?.close()
     miniExpansion?.close()
     geoIp.close()
@@ -130,5 +134,10 @@ class MoAfksPlugin : JavaPlugin() {
     val file = dataFolder.resolve(path)
     if (!file.exists()) saveResource(path, false)
     return file
+  }
+
+  private companion object {
+    /** `stats.yml` is written every five minutes when something changed, and on disable. */
+    const val SAVE_TICKS = 20L * 60 * 5
   }
 }

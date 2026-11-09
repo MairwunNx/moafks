@@ -72,8 +72,8 @@ object PlanAnalytics {
 
 /**
  * The values Plan shows. Plan calls these from its own threads, so they read only [Afk]'s concurrent
- * maps, never Bukkit, and leave out vanished players. A player Mo’Afks hasn't seen since the server started is “not ready”, and Plan
- * keeps what it stored before.
+ * maps and [AfkStats], never Bukkit, and leave out vanished players. A player Mo’Afks has no totals for
+ * yet is “not ready”, and Plan keeps what it stored before.
  */
 @PluginInfo(name = "Mo’Afks", iconName = "bed", iconFamily = Family.SOLID, color = Color.TEAL)
 class PlanExtension(private val plugin: MoAfksPlugin) : DataExtension {
@@ -104,8 +104,29 @@ class PlanExtension(private val plugin: MoAfksPlugin) : DataExtension {
   @NumberProvider(text = "Times AFK", description = "How many times the player went AFK", priority = 70, iconName = "repeat", iconColor = Color.TEAL)
   fun spells(player: UUID): Long = if (plugin.afk.known(player)) plugin.afk.spells(player) else throw NotReadyException()
 
+  @NumberProvider(text = "Times AFK with /afk", description = "How many times the player went AFK with /afk, counted since Mo’Afks 2.3.0", priority = 65, iconName = "keyboard", iconFamily = Family.REGULAR, iconColor = Color.TEAL)
+  fun manualSpells(player: UUID): Long = if (plugin.afk.known(player)) plugin.afk.manualSpells(player) else throw NotReadyException()
+
+  @NumberProvider(text = "Times AFK by idling", description = "How many times the player went AFK by standing idle, counted since Mo’Afks 2.3.0", priority = 60, iconName = "hourglass-half", iconColor = Color.TEAL)
+  fun autoSpells(player: UUID): Long = if (plugin.afk.known(player)) plugin.afk.autoSpells(player) else throw NotReadyException()
+
   @NumberProvider(text = "AFK now", description = "Players in AFK mode right now", priority = 100, iconName = "bed", iconColor = Color.TEAL)
   fun afkNow(): Long = plugin.afk.visible().size.toLong()
+
+  @NumberProvider(
+    text = "Time AFK", description = "Every player's AFK time added up", priority = 90,
+    format = FormatType.TIME_MILLISECONDS, iconName = "clock", iconFamily = Family.REGULAR, iconColor = Color.TEAL,
+  )
+  fun serverTime(): Long = plugin.afk.records().values.sumOf { it.seconds } * 1000
+
+  @NumberProvider(text = "Times AFK", description = "How many times players went AFK", priority = 80, iconName = "repeat", iconColor = Color.TEAL)
+  fun serverSpells(): Long = plugin.afk.records().values.sumOf { it.spells }
+
+  @NumberProvider(text = "Times AFK with /afk", description = "Counted since Mo’Afks 2.3.0", priority = 70, iconName = "keyboard", iconFamily = Family.REGULAR, iconColor = Color.TEAL)
+  fun serverManualSpells(): Long = plugin.afk.records().values.sumOf { it.manual }
+
+  @NumberProvider(text = "Times AFK by idling", description = "Counted since Mo’Afks 2.3.0", priority = 60, iconName = "hourglass-half", iconColor = Color.TEAL)
+  fun serverAutoSpells(): Long = plugin.afk.records().values.sumOf { it.auto }
 
   @TableProvider(tableColor = Color.TEAL)
   fun afkPlayers(): Table {
