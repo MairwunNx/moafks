@@ -11,7 +11,7 @@
 - 🔙 **Coming back is up to the player.** A key press, a click, or a chat line brings them back; water and pistons don’t. A dangerous spot moves them somewhere safe.
 - 🌍 **Every player reads their own language,** picked by IP or by their own choice. English, Russian, Spanish, Portuguese, and German come bundled.
 - ✨ **Everyone sees who’s away:** a ring of particles and an [AFK] mark. Add a time limit with a kick if you want one; vanished players stay hidden.
-- 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, and Plan if you have them, and `/moafks reload` without a restart.
+- 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, and WorldAPI if you have them, a Grafana dashboard, and `/moafks reload` without a restart.
 
 ## Get started
 
@@ -21,7 +21,7 @@
 
 ## Documentation
 
-The [wiki](https://github.com/MairwunNx/moafks/wiki) explains everything else: [commands and permissions](https://github.com/MairwunNx/moafks/wiki/Commands-and-permissions), [configuration](https://github.com/MairwunNx/moafks/wiki/Configuration), [languages](https://github.com/MairwunNx/moafks/wiki/Languages), [PlaceholderAPI, TAB, MiniPlaceholders, and Plan](https://github.com/MairwunNx/moafks/wiki/Integrations), and the [FAQ](https://github.com/MairwunNx/moafks/wiki/FAQ). Source code and issues live on [GitHub](https://github.com/MairwunNx/moafks).
+The [wiki](https://github.com/MairwunNx/moafks/wiki) explains everything else: [commands and permissions](https://github.com/MairwunNx/moafks/wiki/Commands-and-permissions), [configuration](https://github.com/MairwunNx/moafks/wiki/Configuration), [languages](https://github.com/MairwunNx/moafks/wiki/Languages), [PlaceholderAPI, TAB, MiniPlaceholders, Plan, and WorldAPI](https://github.com/MairwunNx/moafks/wiki/Integrations), and the [FAQ](https://github.com/MairwunNx/moafks/wiki/FAQ). Source code and issues live on [GitHub](https://github.com/MairwunNx/moafks).
 
 ## Related projects
 

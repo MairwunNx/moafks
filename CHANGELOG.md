@@ -2,6 +2,14 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.3.0
+
+- 🌐 **WorldAPI.** With WorldAPI 3.4.0 or newer installed, Mo’Afks shares its numbers under `/extensions/moafks`: the server’s totals (`stats`), who is AFK now (`afk`), each player’s numbers (`players/{player}`), and boards of time AFK and times AFK (`leaderboards/time`, `leaderboards/entries`) in the shape of WorldAPI’s own leaderboards. WorldAPI is optional.
+- 📈 **A Grafana dashboard.** Each release carries `moafks.json`, a dashboard over those numbers through the Infinity data source: AFK now, times AFK and how, time AFK, and both boards. Pick your WorldAPI’s Infinity data source in its `worldapi` variable.
+- 📊 **More in Plan.** A player’s Plugins tab shows how many times they went AFK with `/afk` and by idling; the Plugins Overview adds the server’s time AFK, times AFK, and both kinds.
+- 💾 Every player’s AFK totals now also live in `plugins/MoAfks/stats.yml`, so Plan and WorldAPI know players who are offline. The file fills from each player’s own data as they join. Times AFK by `/afk` and by idling count from this version on.
+- 📉 **bStats.** Mo’Afks reports anonymous counts to bStats: the languages it picks and how, times players went AFK and how, and minutes AFK. `metrics: false` in `config.yml` turns it off; bStats’ own `plugins/bStats/config.yml` turns it off for every plugin.
+
 ## 2.2.4
 
 - Built against the Paper API for 26.3 build 245, the newest stable one.

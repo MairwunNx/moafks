@@ -27,11 +27,16 @@ A Paper 26.3 plugin that gives players a safe AFK mode, with `/afk` or after sta
 | `AdventurePlaceholders.kt` | MiniPlaceholders, optional: other plugins' tags in messages and the `<moafks_…>` expansion. Its classes load only when it's there |
 | `Collision.kt` | Collision off on the client: TAB's collision rule when TAB is on, or the `moafks_afk` team. TAB is optional, so its classes load only when it's there |
 | `Vanish.kt` | Who is vanished: the `vanished` metadata vanish plugins set, read on the server thread and kept in a set for TAB's and Plan's threads |
-| `Plan.kt` | The Plan extension: AFK now, why, time AFK, and times AFK per player; who is AFK on the server. Plan is optional, so its classes load only when it's there; `Afk` nudges it on every enter and exit, and it registers again after `/plan reload` |
+| `Plan.kt` | The Plan extension: AFK now, why, time AFK, and times AFK (all, with `/afk`, by idling) per player; who is AFK on the server and the server's totals. Plan is optional, so its classes load only when it's there; `Afk` nudges it on every enter and exit, and it registers again after `/plan reload` |
+| `AfkStats.kt` | Every player's AFK totals (`AfkRecord`: name, seconds, spells, manual, auto) in `stats.yml`, so Plan and WorldAPI know offline players. A join seeds it from the player's persistent data; it's saved off the server thread every five minutes when something changed, and on disable |
+| `WorldApi.kt` | The `moafks` namespace in WorldAPI through `com.mairwunnx:worldapi-expansion`: `stats`, `afk`, `players/{player}`, `leaderboards/{time\|entries}`, all public. WorldAPI is optional: `WorldApi` holds no type of the API, `AfksExpansion` loads only when WorldAPI runs |
+| `Usage.kt`, `Bstats.kt` | bStats: `Usage` counts between sends with atomics, any thread adds; `Bstats` drains it in the chart callbacks. Charts: `player_languages`, `language_source` (`ip`, `client`, `default`, `choice`), `afk_entries`, `afk_entry_kind` (`manual`, `auto`), `afk_minutes`. Off when `metrics: false` or `BSTATS_ID` is 0 |
+| `grafana/moafks.json` | A Grafana dashboard over `/extensions/moafks` through Infinity, its data source a `worldapi` variable, so it works on any server. The release attaches it as `moafks.json` with the version in its description |
 
 ## Rules that keep it working
 
-- State lives in maps keyed by UUID. `states`, `totals`, and `spells` are concurrent because TAB asks PlaceholderAPI from its own thread and Plan calls its extension from its own; `totals` and `spells` outlive a quit, since Plan reads them after it; everything else, Bukkit calls included, stays on the server thread. The chat event is async and hops over with `runTask`.
+- State lives in maps keyed by UUID. `states` and `AfkStats` are concurrent because TAB asks PlaceholderAPI from its own thread, and Plan, WorldAPI, and bStats call in from theirs; `AfkStats` outlives a quit, since Plan and WorldAPI read it after it; everything else, Bukkit calls included, stays on the server thread. The chat event is async and hops over with `runTask`.
+- bStats and WorldAPI never break the plugin: every chart callback and the start go through `Bstats.guard`, which logs one warning. Charts send only counts and fixed keys (language codes, `manual`/`auto`, the sources), never names, UUIDs, reasons, or addresses. A line chart's value is a count since the last send: drain with `getAndSet(0)`, and carry the rest of a minute over.
 - AFK never changes anything the game saves: no `setInvulnerable`, no statistics. Collision, sleeping ignored, and the list name live in memory and come back on exit, quit, death, world change, reload, and disable. Only the AFK total, the count of AFK spells, and the language a player chose go into the player's persistent data. The one exception is the `moafks_afk` team (`Collision.kt`): it exists only while someone is AFK, and the start removes one a crash left behind.
 - `restore()` undoes only what `apply()` changed, and only if nothing else changed it since.
 - Nobody else may learn a vanished player is AFK: no broadcast (the console still logs it), no list mark, the particle ring only to them, and `visibleState()`/`visible()` for anything others read (placeholders, Plan). Their own protection and private lines stay. Read metadata only through `Vanish.check` on the server thread; off-thread code asks `Vanish.hidden`.
@@ -134,14 +139,14 @@ Events other plugins cancelled still count: the player still acted.
 ## Building and testing
 
 - `./gradlew build` runs the tests and builds `build/libs/moafks-<version>.jar`, shaded and relocated under `ru.mairwunnx.moafks.libs`. JDK 25; Gradle provisions it through the foojay resolver.
-- There is no MockBukkit for Paper 26.3; tests cover `Rules`, `Settings`, `LocaleResolver`, and the bundled files. The rest runs on a real Paper; see “Checking a change”.
+- There is no MockBukkit for Paper 26.3; tests cover `Rules`, `Settings`, `LocaleResolver`, `Usage`, `AfkStats`, and the bundled files. The rest runs on a real Paper; see “Checking a change”.
 
 ## Checking a change
 
 1. `./gradlew build`: the tests and the jar.
 2. A real Paper with the jar, started and stopped by the script, which fails on any error about the plugin:
    ```sh
-   python3 -I .claude/scripts/paper_smoke.py --game 26.3 --plugin build/libs/moafks-dev.jar --modrinth placeholderapi --modrinth plan --jar https://cdn.modrinth.com/data/HQyibRsN/versions/N2WfJ0ll/MiniPlaceholders-Paper-3.2.0.jar --command "papi list" --command "miniplaceholders expansions" --expect "registered internal expansion: moafks" --expect "Registered extension: Mo’Afks" --expect "^moafks$" --ignore "Plan\] Failed to enable geolocation"
+   python3 -I .claude/scripts/paper_smoke.py --game 26.3 --plugin build/libs/moafks-dev.jar --modrinth placeholderapi --modrinth plan --jar https://cdn.modrinth.com/data/HQyibRsN/versions/N2WfJ0ll/MiniPlaceholders-Paper-3.2.0.jar --jar https://github.com/MairwunNx/minecraft-worldapi/releases/latest/download/worldapi-paper.jar --command "papi list" --command "miniplaceholders expansions" --expect "registered internal expansion: moafks" --expect "Registered extension: Mo’Afks" --expect "^moafks$" --expect "WorldAPI found" --ignore "Plan\] Failed to enable geolocation"
    ```
    Pass `--game` the version the project targets, and `--build` to pin a Paper build. The script downloads Paper and Modrinth plugins into `~/.cache/paper-smoke` and keeps the server folder when something fails.
 3. The console can't go AFK, so anything about a player needs a game client: after a release reaches Moonlands, the owner tries `/afk`, idling, and the night with someone AFK. Every event in “Events” is a case to try when its handling changed.
@@ -157,6 +162,8 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 - The game: `io.papermc.paper:paper-api` (twice: `compileOnly` and `testImplementation`), `gameVersions` (Modrinth) and `platformVersions` (Hangar) in `build.gradle.kts`, and `api-version` in `src/main/resources/paper-plugin.yml`. A new game version can add events that hurt, move, or reward a player: check them against “Events”.
 - PlaceholderAPI: `compileOnly("me.clip:placeholderapi:…")`, from `repo.extendedclip.com`.
 - MiniPlaceholders: `compileOnly("io.github.miniplaceholders:miniplaceholders-api:…")` from Maven Central. Its Modrinth release 3.2.0 lists games up to 26.2, so the check passes its jar with `--jar <Modrinth file URL>` instead of `--modrinth`; switch to `--modrinth miniplaceholders` once a release lists the game version.
+- bStats: `implementation("org.bstats:bstats-bukkit:…")`, relocated with the rest; the jar must hold no `org/bstats/`.
+- WorldAPI's expansion API: `compileOnly("com.mairwunnx:worldapi-expansion:…")` from Maven Central; `requiresApi()` returns its version, so raise it only when the code needs something new.
 - Plan: `compileOnly("com.djrapitops:plan-api:…")`, from `repo.playeranalytics.net`. Moonlands runs Plan 5.8, whose API lacks graphs and statistics (`DATA_EXTENSION_GRAPH_API`, `DATA_EXTENSION_STATISTICS_API`): use them only once Plan 5.9 is out and installed. `PlanAnalytics` checks the capabilities it uses.
 - Java: `jvmToolchain` in `build.gradle.kts`, the foojay resolver in `settings.gradle.kts`, and CI's `setup-java`.
 - Gradle in `gradle/wrapper/gradle-wrapper.properties`; Kotlin and the Gradle plugins in the `plugins` block; libraries in `dependencies`.
@@ -164,7 +171,7 @@ Where the versions live, for `/update-deps` and `/update-minecraft` (both in `.c
 ## Releasing and Moonlands
 
 1. Add a `## X.Y.Z` section to CHANGELOG.md, written for server owners, and push it. After a change that reaches what the project ships, add it to CHANGELOG.md in the same push: under the topmost “## X.Y.Z” section while that version isn't released (`gh release view vX.Y.Z` fails), or under a new section with the next version: patch for fixes, minor for features, major for breaking changes. A release then needs only the workflow, and the workflow runs only when the owner asks.
-2. Run the “Release” workflow with the new version: `gh workflow run release.yml -R MairwunNx/moafks -f version=X.Y.Z -f modrinth=true -f hangar=true -f curseforge=true`. Its `changelog` field overrides the CHANGELOG.md section; one of the two must be there. It builds with `-PreleaseVersion`, tags `vX.Y.Z`, and attaches `moafks-X.Y.Z.jar` to a GitHub release. Nothing in the repo holds the version; local and CI builds are `dev`.
+2. Run the “Release” workflow with the new version: `gh workflow run release.yml -R MairwunNx/moafks -f version=X.Y.Z -f modrinth=true -f hangar=true -f curseforge=true`. Its `changelog` field overrides the CHANGELOG.md section; one of the two must be there. It builds with `-PreleaseVersion`, tags `vX.Y.Z`, and attaches `moafks-X.Y.Z.jar` and the Grafana dashboard `moafks.json` to a GitHub release. Nothing in the repo holds the version; local and CI builds are `dev`.
 3. To put it on Moonlands, point the Mo’Afks line in `minecraft/extras/jars.txt` (MairwunNx/minecraft) at the release jar, push, and deploy as its CLAUDE.md says, which also says when a restart may happen without asking.
 
 ## Modrinth
