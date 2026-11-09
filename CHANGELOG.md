@@ -2,6 +2,10 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.5.0
+
+- Turning the camera now counts from where it pointed when AFK began, so a small turn right after `/afk` no longer brings a player back.
+
 ## 2.4.0
 
 - 🌐 **WorldAPI 4.5.0.** Mo’Afks now shares its numbers through WorldAPI’s expansion API 2, so it needs WorldAPI 4.5.0 or newer for `/extensions/moafks`. With an older WorldAPI the plugin runs as before, without its WorldAPI data, and the log says in one line to update WorldAPI. The paths and fields stay the same, so the Grafana dashboard keeps working.

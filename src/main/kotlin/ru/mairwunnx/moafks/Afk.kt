@@ -160,6 +160,8 @@ class Afk(private val plugin: MoAfksPlugin) {
     val state = AfkState(player.name, reason, manual, System.currentTimeMillis(), player.location)
     apply(player, state)
     states[player.uniqueId] = state
+    // The camera counts from where it points now, not from the last activity before AFK.
+    touch(player)
     plugin.usage.entered(manual)
     plugin.analytics?.changed(player)
     plugin.log.debug { "${player.name} is AFK: ${if (manual) "manual" else "idle"}${reason?.let { ", $it" }.orEmpty()}" }
