@@ -34,3 +34,8 @@ dependencies:
       load: BEFORE
       required: false
       join-classpath: true
+    # Brings the expansion API's classes, which WorldApi.kt uses.
+    WorldAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true

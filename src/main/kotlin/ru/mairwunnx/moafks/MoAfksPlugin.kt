@@ -22,6 +22,7 @@ class MoAfksPlugin : JavaPlugin() {
   private val tasks = mutableListOf<BukkitTask>()
   private var expansion: AutoCloseable? = null
   private var miniExpansion: AutoCloseable? = null
+  private var worldApi: AutoCloseable? = null
   var analytics: Analytics? = null; private set
 
   override fun onEnable() {
@@ -54,6 +55,10 @@ class MoAfksPlugin : JavaPlugin() {
       analytics = runCatching { PlanAnalytics.register(this) }.onFailure { log.warn("Can't show AFK time in Plan: ${it.message}") }.getOrNull()
       if (analytics != null) log.info("Plan found: AFK time shows on its pages")
     }
+    if (WorldApi.available) {
+      worldApi = runCatching { WorldApi.register(this) }.onFailure { log.warn("WorldAPI didn't take Mo’Afks' data: ${it.message}") }.getOrNull()
+      if (worldApi != null) log.info("WorldAPI found: AFK totals, players, and boards at /extensions/moafks")
+    }
     log.info("Mo’Afks ${pluginMeta.version} is on: ${languages.codes.sorted().joinToString()}, default ${resolver.default}")
   }
 
@@ -64,6 +69,8 @@ class MoAfksPlugin : JavaPlugin() {
     // Before the quiet exits below: Plan may already be stopping.
     analytics?.close()
     analytics = null
+    worldApi?.close()
+    worldApi = null
     if (::afk.isInitialized) afk.shutdown()
     stats.save()
     expansion?.close()

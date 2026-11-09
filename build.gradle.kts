@@ -29,6 +29,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.12.0")
   implementation("com.charleskorn.kaml:kaml:0.104.0")
   implementation("com.maxmind.db:maxmind-db:4.2.0")
+  // WorldAPI brings these classes; Mo’Afks only compiles against them.
+  compileOnly("com.mairwunnx:worldapi-expansion:1.0.0")
 
   testImplementation("io.papermc.paper:paper-api:26.3.build.245-stable")
   testImplementation(kotlin("test"))
