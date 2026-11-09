@@ -31,7 +31,7 @@ dependencies {
   implementation("com.maxmind.db:maxmind-db:4.2.0")
   implementation("org.bstats:bstats-bukkit:3.2.1")
   // WorldAPI brings these classes; Mo’Afks only compiles against them.
-  compileOnly("com.mairwunnx:worldapi-expansion:1.0.0")
+  compileOnly("com.mairwunnx:worldapi-expansion:2.0.0")
 
   testImplementation("io.papermc.paper:paper-api:26.3.build.245-stable")
   testImplementation(kotlin("test"))

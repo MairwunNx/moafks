@@ -2,6 +2,12 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field. The same notes go to GitHub and Modrinth.
 
+## 2.4.0
+
+- 🌐 **WorldAPI 4.5.0.** Mo’Afks now shares its numbers through WorldAPI’s expansion API 2, so it needs WorldAPI 4.5.0 or newer for `/extensions/moafks`. With an older WorldAPI the plugin runs as before, without its WorldAPI data, and the log says in one line to update WorldAPI. The paths and fields stay the same, so the Grafana dashboard keeps working.
+- 📖 `GET /extensions` now describes each resource: its parameters (the player, the board, `limit` from 1 to 500) and the fields it answers with, so clients and the MCP server learn them without the wiki.
+- A board other than `time` or `entries` now answers 400 instead of 404, and a player WorldAPI doesn’t know answers its own 404.
+
 ## 2.3.0
 
 - 🌐 **WorldAPI.** With WorldAPI 3.4.0 or newer installed, Mo’Afks shares its numbers under `/extensions/moafks`: the server’s totals (`stats`), who is AFK now (`afk`), each player’s numbers (`players/{player}`), and boards of time AFK and times AFK (`leaderboards/time`, `leaderboards/entries`) in the shape of WorldAPI’s own leaderboards. WorldAPI is optional.

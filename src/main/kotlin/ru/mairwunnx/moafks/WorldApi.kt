@@ -1,16 +1,14 @@
 package ru.mairwunnx.moafks
 
-import com.mairwunnx.worldapi.expansion.ExpansionApi
-import com.mairwunnx.worldapi.expansion.Resource
-import com.mairwunnx.worldapi.expansion.WorldApiExpansion
-import com.mairwunnx.worldapi.expansion.WorldApiExpansions
+import com.mairwunnx.worldapi.expansion.v2.Expansion
+import com.mairwunnx.worldapi.expansion.v2.PlayerRef
 import org.bukkit.Bukkit
 import java.time.Instant
 import java.util.UUID
 
 /**
- * Mo’Afks' data in WorldAPI, when it runs: the `moafks` namespace. [AfksExpansion] speaks WorldAPI's
- * expansion API; this object holds no type of it, so the plugin loads without WorldAPI.
+ * Mo’Afks' data in WorldAPI, when it runs: the `moafks` namespace. [AfksExpansion] speaks WorldAPI's expansion API 2,
+ * which WorldAPI 4.5.0 brings. This object holds no type of it, so the plugin loads without WorldAPI or with an older one.
  */
 object WorldApi {
   val available: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("WorldAPI")
@@ -18,96 +16,77 @@ object WorldApi {
   /** Registers the expansion. Call only when [available]. */
   fun register(plugin: MoAfksPlugin): AutoCloseable {
     try {
-      AfksExpansion.register(plugin)
+      AfksExpansion.plugin = plugin
+      AfksExpansion.register()
     } catch (error: LinkageError) {
-      // WorldAPI before 3.4.0 has no expansion API.
-      throw IllegalStateException("this WorldAPI is too old, it needs 3.4.0 or newer", error)
+      // WorldAPI before 4.5.0 has no expansion API 2.
+      throw IllegalStateException("this WorldAPI is too old, Mo’Afks needs WorldAPI 4.5.0 or newer", error)
     }
     return AutoCloseable { runCatching { AfksExpansion.unregister() } }
   }
 }
 
+/** How a player went AFK: with `/afk`, or by standing idle. */
+enum class AfkKind { MANUAL, AUTO }
+
+/** A leaderboard: by time AFK in seconds, or by times AFK. */
+enum class AfkBoard(val title: String, val unit: String, val score: (AfkRecord) -> Long) {
+  TIME("Time AFK", "seconds", { it.seconds }),
+  ENTRIES("Times AFK", "times", { it.spells }),
+}
+
+@JvmRecord data class AfkTotals(val afkNow: Int, val players: Int, val entries: Long, val manual: Long, val auto: Long, val seconds: Long, val minutes: Long)
+
+@JvmRecord data class AfkNow(val uuid: UUID, val name: String, val since: Instant, val seconds: Long, val kind: AfkKind, val reason: String?)
+
+@JvmRecord data class AfkPlayer(val uuid: UUID, val name: String?, val afk: Boolean, val kind: AfkKind?, val reason: String?, val entries: Long, val manual: Long, val auto: Long, val seconds: Long, val minutes: Long, val rank: Int)
+
+@JvmRecord data class AfkPlace(val place: Int, val player: PlayerRef, val value: Long)
+
+@JvmRecord data class AfkLeaderboard(val id: AfkBoard, val title: String, val unit: String, val total: Int, val entries: List<AfkPlace>, val at: Instant)
+
 /**
- * The `moafks` namespace: the server's totals, who is AFK now, each player's numbers, and boards in the
- * shape of WorldAPI's own leaderboards. Handlers run on WorldAPI's threads and read only [Afk]'s
- * concurrent state and [AfkStats]; vanished players stay out of everything about now.
+ * The `moafks` namespace: the server's totals, who is AFK now, each player's numbers, and boards in the shape of
+ * WorldAPI's own leaderboards. Handlers run on WorldAPI's threads and read only [Afk]'s concurrent state and
+ * [AfkStats]. Vanished players stay out of everything about now.
  */
-class AfksExpansion(private val plugin: MoAfksPlugin) : WorldApiExpansion {
-  override fun id() = ID
+object AfksExpansion : Expansion("moafks", "Mo’Afks", "Mo’Afks: who is AFK, how often players go AFK, and for how long") {
+  lateinit var plugin: MoAfksPlugin
 
-  override fun requiresApi(): String = ExpansionApi.VERSION
+  val player = player("player", "A player, by UUID or name")
+  val board = choice("board", "What players are ranked by: time (seconds AFK) or entries (times AFK)", AfkBoard::class.java, AfkBoard.TIME)
+  val limit = integer("limit", "How many players, from 1 to 500", 1, 500, 10)
 
-  override fun name() = "Mo’Afks"
+  val stats = resource("stats", "The server's totals: players AFK now, times players went AFK (by /afk and by idling since 2.3.0), and time AFK") { totals() }.returns(AfkTotals::class.java).publicly()
+  val afk = resource("afk", "Players AFK now: since when, for how long, how they went AFK, and why") { now() }.returnsListOf(AfkNow::class.java).publicly()
+  val players = resource("players/{player}", "A player's numbers: AFK now, times AFK (by /afk and by idling since 2.3.0), time AFK, and rank by time") { numbers(it[player]) }.returns(AfkPlayer::class.java).publicly()
+  val leaderboards = resource("leaderboards/{board}", "Players ranked by time AFK (seconds) or times AFK, shaped as WorldAPI's own leaderboards") { top(it[board], it[limit]) }.query(limit).returns(AfkLeaderboard::class.java).publicly()
 
-  override fun description() = "Mo’Afks: who is AFK, how often players go AFK, and for how long"
-
-  override fun resources(): List<Resource> = listOf(
-    Resource.of("stats", "The server's totals: players AFK now, times players went AFK (by /afk and by idling since 2.3.0), and time AFK") {
-      val records = plugin.afk.records().values
-      mapOf(
-        "afkNow" to plugin.afk.visible().size,
-        "players" to records.size,
-        "entries" to records.sumOf { it.spells },
-        "manual" to records.sumOf { it.manual },
-        "auto" to records.sumOf { it.auto },
-        "seconds" to records.sumOf { it.seconds },
-        "minutes" to records.sumOf { it.seconds } / 60,
-      )
-    }.publicly(),
-    Resource.of("afk", "Players AFK now: since when, for how long, how they went AFK, and why") {
-      val now = System.currentTimeMillis()
-      plugin.afk.visibleStates().sortedBy { it.second.since }.map { (id, state) ->
-        mapOf(
-          "uuid" to id.toString(), "name" to state.name, "since" to Instant.ofEpochMilli(state.since).toString(),
-          "seconds" to state.seconds(now), "kind" to kind(state.manual), "reason" to state.reason,
-        )
-      }
-    }.publicly(),
-    Resource.of("players/{player}", "A player's numbers, by UUID or name: AFK now, times AFK (by /afk and by idling since 2.3.0), time AFK, and rank by time") { request ->
-      val id = player(request.path("player"))
-      if (!plugin.afk.known(id) && plugin.afk.visibleState(id) == null) throw NoSuchElementException("Mo’Afks knows nothing about this player yet")
-      val records = plugin.afk.records()
-      val record = records[id] ?: AfkRecord()
-      val state = plugin.afk.visibleState(id)
-      mapOf(
-        "uuid" to id.toString(), "name" to (record.name.ifEmpty { null } ?: Bukkit.getOfflinePlayer(id).name),
-        "afk" to (state != null), "kind" to state?.let { kind(it.manual) }, "reason" to state?.reason,
-        "entries" to record.spells, "manual" to record.manual, "auto" to record.auto,
-        "seconds" to record.seconds, "minutes" to record.seconds / 60,
-        "rank" to records.values.count { it.seconds > record.seconds } + 1,
-      )
-    }.publicly(),
-    Resource.of("leaderboards/{board}", "Players ranked by time AFK (seconds) or times AFK, shaped as WorldAPI's own leaderboards; ?limit=1..500") { request ->
-      val board = request.path("board")
-      val (title, unit, score) = when (board) {
-        "time" -> Triple("Time AFK", "seconds") { r: AfkRecord -> r.seconds }
-        "entries" -> Triple("Times AFK", "times") { r: AfkRecord -> r.spells }
-        else -> throw NoSuchElementException("Boards: time, entries")
-      }
-      val ranked = plugin.afk.records().entries.filter { score(it.value) > 0 }.sortedByDescending { score(it.value) }
-      mapOf(
-        "id" to board, "title" to title, "unit" to unit, "total" to ranked.size,
-        "entries" to ranked.take(request.query("limit", 10, 1, 500)).mapIndexed { i, (id, record) ->
-          mapOf("place" to i + 1, "player" to mapOf("uuid" to id.toString(), "name" to record.name), "value" to score(record))
-        },
-        "at" to Instant.now().toString(),
-      )
-    }.publicly(),
-  )
-
-  private fun kind(manual: Boolean) = if (manual) "manual" else "auto"
-
-  /** A UUID, or the name of a player the server knows. */
-  private fun player(raw: String): UUID = runCatching { UUID.fromString(raw) }.getOrNull()
-    ?: plugin.stats.all().entries.firstOrNull { it.value.name.equals(raw, ignoreCase = true) }?.key
-    ?: Bukkit.getOfflinePlayerIfCached(raw)?.uniqueId
-    ?: throw NoSuchElementException("No player named $raw has played here")
-
-  companion object {
-    const val ID = "moafks"
-
-    fun register(plugin: MoAfksPlugin) = WorldApiExpansions.register(AfksExpansion(plugin))
-
-    fun unregister() = WorldApiExpansions.unregister(ID)
+  private fun totals(): AfkTotals {
+    val records = plugin.afk.records().values
+    val seconds = records.sumOf { it.seconds }
+    return AfkTotals(plugin.afk.visible().size, records.size, records.sumOf { it.spells }, records.sumOf { it.manual }, records.sumOf { it.auto }, seconds, seconds / 60)
   }
+
+  private fun now(): List<AfkNow> {
+    val now = System.currentTimeMillis()
+    return plugin.afk.visibleStates().sortedBy { it.second.since }.map { (id, state) -> AfkNow(id, state.name, Instant.ofEpochMilli(state.since), state.seconds(now), kind(state.manual), state.reason) }
+  }
+
+  private fun numbers(who: PlayerRef): AfkPlayer {
+    val state = plugin.afk.visibleState(who.uuid)
+    if (!plugin.afk.known(who.uuid) && state == null) throw NoSuchElementException("Mo’Afks knows nothing about this player yet")
+    val records = plugin.afk.records()
+    val record = records[who.uuid] ?: AfkRecord()
+    val rank = records.values.count { it.seconds > record.seconds } + 1
+    return AfkPlayer(who.uuid, record.name.ifEmpty { null } ?: who.name, state != null, state?.let { kind(it.manual) }, state?.reason, record.spells, record.manual, record.auto, record.seconds, record.seconds / 60, rank)
+  }
+
+  private fun top(board: AfkBoard, limit: Int): AfkLeaderboard {
+    val ranked = plugin.afk.records().entries.filter { board.score(it.value) > 0 }.sortedByDescending { board.score(it.value) }
+    val entries = ranked.take(limit).mapIndexed { i, (id, record) -> AfkPlace(i + 1, PlayerRef(id, record.name), board.score(record)) }
+    return AfkLeaderboard(board, board.title, board.unit, ranked.size, entries, Instant.now())
+  }
+
+  private fun kind(manual: Boolean) = if (manual) AfkKind.MANUAL else AfkKind.AUTO
 }
