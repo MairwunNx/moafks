@@ -8,9 +8,9 @@
 - 👻 **Mobs leave them alone:** nothing targets them, wardens don’t hear them, phantoms don’t come, and Bad Omen doesn’t start a raid.
 - 🌙 **AFK players don’t block the night.** One friend away from the keyboard no longer keeps everyone in the dark.
 - ⚖️ **The protection doesn’t pay off.** Nobody goes AFK mid-fight, mid-fall, or with a mob on their heels, and AFK players pick up no items or experience.
-- 🔙 **Coming back is up to the player.** A key press, a click, or a chat line brings them back; water and pistons don’t. A dangerous spot moves them somewhere safe.
+- 🔙 **Coming back is up to the player.** A key press, a click, or a chat line brings them back. Water and pistons don’t. A dangerous spot moves them somewhere safe.
 - 🌍 **Every player reads their own language,** picked by IP or by their own choice. English, Russian, Spanish, Portuguese, and German come bundled.
-- ✨ **Everyone sees who’s away:** a ring of particles and an [AFK] mark. Add a time limit with a kick if you want one; vanished players stay hidden.
+- ✨ **Everyone sees who’s away:** a ring of particles and an [AFK] mark. Add a time limit with a kick if you want one. Vanished players stay hidden.
 - 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, and WorldAPI if you have them, a Grafana dashboard, and `/moafks reload` without a restart.
 
 ## Get started
