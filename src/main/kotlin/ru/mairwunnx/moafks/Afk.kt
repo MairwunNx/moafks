@@ -147,7 +147,7 @@ class Afk(private val plugin: MoAfksPlugin) {
   /** Puts the player into AFK. Returns false when they're already AFK or can't be right now; a manual try hears why. */
   fun enter(player: Player, manual: Boolean, reason: String? = null): Boolean {
     if (!settings.enabled || isAfk(player)) return false
-    val danger = Rules.danger(situation(player), settings.antiAbuse)
+    val danger = refusal(player)
     if (danger != null) {
       if (manual) {
         messenger.tell(player, danger.message)
@@ -184,6 +184,9 @@ class Afk(private val plugin: MoAfksPlugin) {
     effects.play(player, effects.enter)
     return true
   }
+
+  /** Why anti-abuse keeps the player from going AFK right now, or null when nothing does. */
+  fun refusal(player: Player): Danger? = Rules.danger(situation(player), settings.antiAbuse)
 
   /**
    * Ends AFK and puts back what it changed. A quiet exit (quit, death, another world, reload) only

@@ -25,6 +25,7 @@ class MoAfksPlugin : JavaPlugin() {
   private var expansion: AutoCloseable? = null
   private var miniExpansion: AutoCloseable? = null
   private var worldApi: AutoCloseable? = null
+  private var allay: AutoCloseable? = null
   var analytics: Analytics? = null; private set
 
   override fun onEnable() {
@@ -61,6 +62,10 @@ class MoAfksPlugin : JavaPlugin() {
       worldApi = runCatching { WorldApi.register(this) }.onFailure { log.warn("WorldAPI didn't take Mo’Afks' data: ${it.message}") }.getOrNull()
       if (worldApi != null) log.info("WorldAPI found: AFK totals, players, and boards at /extensions/moafks")
     }
+    if (Allay.available) {
+      allay = runCatching { Allay.register(this) }.onFailure { log.warn("Allay didn't take Mo’Afks' tools: ${it.message}") }.getOrNull()
+      if (allay != null) log.info("Allay found: players can ask it who is AFK, the AFK rules, and to put them AFK")
+    }
     log.info("Mo’Afks ${pluginMeta.version} is on: ${languages.codes.sorted().joinToString()}, default ${resolver.default}")
   }
 
@@ -73,6 +78,8 @@ class MoAfksPlugin : JavaPlugin() {
     analytics = null
     worldApi?.close()
     worldApi = null
+    allay?.close()
+    allay = null
     if (::afk.isInitialized) afk.shutdown()
     bstats.stop()
     stats.save()

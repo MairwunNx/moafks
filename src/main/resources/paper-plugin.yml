@@ -39,3 +39,8 @@ dependencies:
       load: BEFORE
       required: false
       join-classpath: true
+    # Brings the expansion API's classes, which Allay.kt uses.
+    Allay:
+      load: BEFORE
+      required: false
+      join-classpath: true

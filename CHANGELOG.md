@@ -4,6 +4,7 @@ The “Release” workflow takes the notes for a version from its section here, 
 
 ## 2.5.0
 
+- 🤖 **Allay.** With [Allay](https://github.com/allay-ai/minecraft) 6.33 or newer installed, players can ask the AI helper who is AFK and since when, what this server’s AFK rules are, and to put them AFK, with a reason if they like. Anti-abuse still applies: in a fight or while falling, Allay says why not and when to try again. AFK reasons stay out of answers everyone reads (`/askall`), and vanished players never show. With an older Allay the plugin runs as before, and the log says in one line to update Allay.
 - Turning the camera now counts from where it pointed when AFK began, so a small turn right after `/afk` no longer brings a player back.
 
 ## 2.4.0
