@@ -14,7 +14,9 @@ class MoAfksPlugin : JavaPlugin() {
   val geoIp by lazy { GeoIp(dataFolder.resolve("geoip"), log) }
   val messenger = Messenger(this)
   val vanish = Vanish()
+  val usage = Usage()
   val stats by lazy { AfkStats(dataFolder.resolve("stats.yml"), log) }
+  private val bstats = Bstats(this)
   lateinit var afk: Afk; private set
   lateinit var sessions: SessionListener; private set
 
@@ -72,6 +74,7 @@ class MoAfksPlugin : JavaPlugin() {
     worldApi?.close()
     worldApi = null
     if (::afk.isInitialized) afk.shutdown()
+    bstats.stop()
     stats.save()
     expansion?.close()
     miniExpansion?.close()
@@ -96,6 +99,7 @@ class MoAfksPlugin : JavaPlugin() {
 
     if (::afk.isInitialized) afk.reapply()
     setUpGeoIp()
+    bstats.apply(settings.metrics)
     return ok
   }
 

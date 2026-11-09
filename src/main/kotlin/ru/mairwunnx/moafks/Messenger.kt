@@ -17,8 +17,12 @@ class Messenger(private val plugin: MoAfksPlugin) {
   private val choiceKey by lazy { NamespacedKey(plugin, "language") }
 
   /** The player's choice beats every automatic rule, as long as a file for it is still there. */
-  fun languageOf(sender: CommandSender): String =
-    (sender as? Player)?.let { plugin.resolver.resolve(plugin.sessions.country(it), it.locale(), chosen(it)) } ?: plugin.resolver.default
+  fun languageOf(sender: CommandSender): String {
+    val player = sender as? Player ?: return plugin.resolver.default
+    val pick = plugin.resolver.pick(plugin.sessions.country(player), player.locale(), chosen(player))
+    plugin.usage.language(pick.code, pick.source)
+    return pick.code
+  }
 
   /** The language the player chose with `/moafks language`, kept in their data; null when Mo’Afks picks. */
   fun chosen(player: Player): String? =

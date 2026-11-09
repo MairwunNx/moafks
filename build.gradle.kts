@@ -29,6 +29,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.12.0")
   implementation("com.charleskorn.kaml:kaml:0.104.0")
   implementation("com.maxmind.db:maxmind-db:4.2.0")
+  implementation("org.bstats:bstats-bukkit:3.2.1")
   // WorldAPI brings these classes; Mo’Afks only compiles against them.
   compileOnly("com.mairwunnx:worldapi-expansion:1.0.0")
 
@@ -58,8 +59,8 @@ tasks.processResources {
 tasks.shadowJar {
   archiveClassifier = ""
   mergeServiceFiles()
-  // Relocated so other plugins that ship their own Kotlin or kaml can't clash with ours.
-  listOf("kotlin", "kotlinx", "com.charleskorn.kaml", "it.krzeminski.snakeyaml", "okio", "net.thauvin", "com.maxmind")
+  // Relocated so other plugins that ship their own Kotlin or kaml can't clash with ours; bStats refuses to run unrelocated.
+  listOf("kotlin", "kotlinx", "com.charleskorn.kaml", "it.krzeminski.snakeyaml", "okio", "net.thauvin", "com.maxmind", "org.bstats")
     .forEach { relocate(it, "ru.mairwunnx.moafks.libs.$it") }
   exclude("META-INF/*.kotlin_module", "META-INF/versions/*/module-info.class", "module-info.class")
   dependencies { exclude(dependency("org.jetbrains:annotations")) }

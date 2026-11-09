@@ -23,6 +23,13 @@ class LocaleResolverTest {
     assertEquals("en", resolver.resolve(null, null))
   }
 
+  @Test fun `a pick says how it was made`() {
+    assertEquals(LocaleResolver.Pick("ru", Usage.Source.IP), resolver.pick("RU", Locale.US))
+    assertEquals(LocaleResolver.Pick("es", Usage.Source.CLIENT), resolver.pick("DE", Locale.forLanguageTag("es")))
+    assertEquals(LocaleResolver.Pick("en", Usage.Source.DEFAULT), resolver.pick(null, Locale.GERMANY))
+    assertEquals(LocaleResolver.Pick("es", Usage.Source.CHOICE), resolver.pick("RU", Locale.US, chosen = "es"))
+  }
+
   @Test fun `sources follow the configured order`() {
     val clientFirst = LocaleResolver(Settings.Locales(sources = listOf(Settings.Source.CLIENT, Settings.Source.IP)), available)
     assertEquals("es", clientFirst.resolve("RU", Locale.forLanguageTag("es")))

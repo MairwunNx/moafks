@@ -12,6 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * One AFK spell. What AFK changed on the player is kept here, so [Afk] puts back exactly that: null
@@ -25,6 +26,8 @@ class AfkState(val name: String, val reason: String?, val manual: Boolean, val s
   var marked: Component? = null
   /** The limit warnings already shown. */
   val warned = mutableSetOf<Int>()
+  /** Up to when bStats has counted this spell's time, in milliseconds. */
+  val counted = AtomicLong(since)
 
   fun seconds(now: Long = System.currentTimeMillis()) = (now - since) / 1000
 }
@@ -33,7 +36,7 @@ class AfkState(val name: String, val reason: String?, val manual: Boolean, val s
  * Who is AFK, and everything that goes with it: entering and leaving, the idle timer, the time
  * limit, and putting the player back as they were. State is keyed by UUID; Bukkit calls happen on
  * the server thread. [states] is a concurrent map, and the totals live in [AfkStats], because
- * PlaceholderAPI and Plan read them from their own threads.
+ * PlaceholderAPI, Plan, WorldAPI, and bStats read them from their own threads.
  */
 class Afk(private val plugin: MoAfksPlugin) {
   private val states = ConcurrentHashMap<UUID, AfkState>()
@@ -89,6 +92,12 @@ class Afk(private val plugin: MoAfksPlugin) {
       )
     }
     return all
+  }
+
+  /** Hands bStats the time of the spells still going on. Safe from any thread. */
+  fun settle() {
+    val now = System.currentTimeMillis()
+    states.values.forEach { plugin.usage.afk(now - it.counted.getAndSet(now)) }
   }
 
   /** Everyone AFK now whom others may see, with their UUIDs; safe from any thread. */
@@ -151,6 +160,7 @@ class Afk(private val plugin: MoAfksPlugin) {
     val state = AfkState(player.name, reason, manual, System.currentTimeMillis(), player.location)
     apply(player, state)
     states[player.uniqueId] = state
+    plugin.usage.entered(manual)
     plugin.analytics?.changed(player)
     plugin.log.debug { "${player.name} is AFK: ${if (manual) "manual" else "idle"}${reason?.let { ", $it" }.orEmpty()}" }
 
@@ -182,6 +192,7 @@ class Afk(private val plugin: MoAfksPlugin) {
     restore(player, state)
     val now = System.currentTimeMillis()
     val seconds = state.seconds(now)
+    plugin.usage.afk(now - state.counted.getAndSet(now))
     addTotal(player, seconds, state.manual)
     plugin.analytics?.changed(player)
     touch(player)

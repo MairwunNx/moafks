@@ -9,6 +9,7 @@
 
 enabled: true   # false turns the plugin off; nobody goes AFK.
 debug: false    # true logs who goes AFK and why, and how each language was picked.
+metrics: true   # false turns bStats off for this plugin.
 
 locales:
   # Players nothing else matches, and the console, get this language.

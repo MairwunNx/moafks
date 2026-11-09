@@ -20,6 +20,8 @@ import kotlinx.serialization.builtins.serializer
 data class Settings(
   val enabled: Boolean = true,
   val debug: Boolean = false,
+  /** bStats: anonymous counts for the plugin's page on bstats.org. */
+  val metrics: Boolean = true,
   val locales: Locales = Locales(),
   val geoip: GeoIpSettings = GeoIpSettings(),
   val auto: Auto = Auto(),

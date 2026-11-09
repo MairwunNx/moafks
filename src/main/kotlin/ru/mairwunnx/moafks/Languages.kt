@@ -93,17 +93,22 @@ class LocaleResolver(private val settings: Settings.Locales, private val availab
 
   val default: String = normalize(settings.default).takeIf { it in available } ?: Languages.FALLBACK
 
-  fun resolve(country: String?, client: Locale?, chosen: String? = null): String {
-    chosen?.let(::normalize)?.takeIf { it in available }?.let { return it }
+  fun resolve(country: String?, client: Locale?, chosen: String? = null): String = pick(country, client, chosen).code
+
+  /** The language and how it was picked, which bStats counts. */
+  fun pick(country: String?, client: Locale?, chosen: String? = null): Pick {
+    chosen?.let(::normalize)?.takeIf { it in available }?.let { return Pick(it, Usage.Source.CHOICE) }
     for (source in settings.sources) {
       val code = when (source) {
         Settings.Source.IP -> country?.let { byCountry[it.uppercase()] }
         Settings.Source.CLIENT -> client?.let(::fromClient)
       }
-      if (code != null && code in available) return code
+      if (code != null && code in available) return Pick(code, if (source == Settings.Source.IP) Usage.Source.IP else Usage.Source.CLIENT)
     }
-    return default
+    return Pick(default, Usage.Source.DEFAULT)
   }
+
+  data class Pick(val code: String, val source: Usage.Source)
 
   /** A typed code, like `/moafks language pt-BR`: a `pt_br` file first, then `pt`; null when there's neither. */
   fun match(typed: String): String? {
