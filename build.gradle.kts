@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-  compileOnly("io.papermc.paper:paper-api:26.3.build.245-stable")
+  compileOnly("io.papermc.paper:paper-api:26.3.build.253-stable")
   compileOnly("me.clip:placeholderapi:2.12.3")
   compileOnly("com.djrapitops:plan-api:5.9-R1.3")
   compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.2.0")
@@ -35,7 +35,7 @@ dependencies {
   // So does Allay, the AI helper, for its expansion API.
   compileOnly("chat.allay:allay-expansion:2.0.0")
 
-  testImplementation("io.papermc.paper:paper-api:26.3.build.245-stable")
+  testImplementation("io.papermc.paper:paper-api:26.3.build.253-stable")
   testImplementation(kotlin("test"))
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
