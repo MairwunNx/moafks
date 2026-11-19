@@ -1,5 +1,7 @@
 # Mo’Afks
 
+![Mo’Afks: отойдите от клавиатуры, оставаясь в безопасности](https://raw.githubusercontent.com/MairwunNx/moafks/master/media/hero.webp)
+
 <p align="center">
   <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
   <a href="https://modrinth.com/plugin/moafks"><img alt="Modrinth" src="https://img.shields.io/modrinth/dt/moafks?logo=modrinth&label=Modrinth&color=00AF5C"></a>
@@ -29,6 +31,9 @@ Mo’Afks работает на Moonlands — моём сервере со сл�
 - 🌍 **Каждый читает на своём языке:** плагин выбирает его по IP, а игрок может выбрать сам. Английский, русский, испанский, португальский и немецкий идут в комплекте.
 - ✨ **Все видят, кто отошёл:** кольцо частиц и метка [AFK]. По желанию — ограничение времени с киком. Игроки в ванише остаются невидимыми.
 - 🧩 **Плагин встраивается в сервер:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, WorldAPI и Allay, если они стоят, дашборд для Grafana и `/moafks reload` без перезапуска.
+
+<p align="center"><img src="https://raw.githubusercontent.com/MairwunNx/moafks/master/media/screenshots/afk.gif" width="760" alt="Lena пишет /afk making dinner, вокруг неё появляется кольцо частиц, а подошедшие зомби и скелет её не трогают">
+  <br><sub>Lena пишет <code>/afk making dinner</code>, и подошедшие мобы её не трогают</sub></p>
 
 ## Как начать
 

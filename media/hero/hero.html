@@ -1,0 +1,47 @@
+<!--
+  The hero image and social preview. Render from this folder:
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --force-device-scale-factor=2 --window-size=1280,640 --virtual-time-budget=3000 --screenshot=hero.png "file://$PWD/hero.html"
+  magick hero.png -define webp:lossless=true ../hero.webp (README), and render with --force-device-scale-factor=1 for GitHub's social preview (under 1 MB).
+-->
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;width:1280px;height:640px;overflow:hidden;background:#0b0d12;font-family:-apple-system,"SF Pro Display","Inter",sans-serif}
+#bg{position:absolute;left:0;top:0;width:1280px;height:640px;object-fit:cover;filter:blur(1.2px) saturate(1.05)}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,10,22,.86) 0%,rgba(14,10,22,.66) 38%,rgba(14,10,22,.12) 64%,rgba(14,10,22,0) 100%)}
+.text{position:absolute;left:64px;top:0;bottom:0;width:500px;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.text h1,.text p{text-shadow:0 2px 18px rgba(0,0,0,.45)}
+.tag{display:inline-flex;align-items:center;gap:14px;font-size:18px;font-weight:700;color:#c9a8ff;letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
+.tag img{width:34px;height:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+h1{margin:0;font-size:60px;line-height:1.02;font-weight:800;letter-spacing:-.02em}
+h1 span{color:#b388ff}
+p{margin:22px 0 0;font-size:22px;line-height:1.4;color:#d3d6df;max-width:470px}
+.chips{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+.chips b{font-weight:600;font-size:16px;color:#e6e8ee;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);padding:7px 12px;border-radius:8px;backdrop-filter:blur(6px)}
+.powered{margin-top:24px;display:flex;align-items:center;gap:8px;font-size:15px;color:rgba(255,255,255,.72)}
+.powered strong{color:#fff;font-weight:600}
+.made{position:absolute;left:64px;bottom:22px;font-size:12px;letter-spacing:.02em;color:rgba(255,255,255,.42)}
+.shot{position:absolute;perspective:1600px}
+.shot img{width:100%;display:block;border-radius:14px;transform:rotateY(-16deg) rotateX(4deg) rotateZ(1deg);transform-origin:left center;box-shadow:0 40px 80px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.12)}
+@font-face{font-family:"Minecraft";src:url("minecraft.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"Minecraft";src:url("minecraft-bold.woff2") format("woff2");font-weight:700}
+.tag img{border-radius:8px}
+.chat{margin-top:26px;display:flex;flex-direction:column;gap:6px}
+.mc{font:400 17px/1 "Minecraft",monospace;color:#fff;background:rgba(0,0,0,.5);padding:7px 10px 6px 8px;width:max-content;text-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.mc .gray{color:#AAAAAA}.mc .w{color:#fff}
+.nametag{position:absolute;transform:translateX(-50%);white-space:nowrap;font:400 15px/1 "Minecraft",monospace;color:#fff;background:rgba(0,0,0,.45);padding:6px 9px;border-radius:4px;text-shadow:2px 2px 0 rgba(0,0,0,.35);letter-spacing:.01em}
+.nametag b{font-weight:400;color:#AAAAAA}
+</style></head><body>
+<img id="bg" src="../hero-background.png">
+<div class="shade"></div>
+<div class="nametag" style="left:1020px;top:346px"><b>[AFK]</b> Lena</div>
+<div class="text">
+<div class="tag"><img src="../icon.png">Mo’Afks</div>
+<h1>Step away.<br><span>Stay safe.</span></h1>
+<p>A safe AFK mode for Paper: no damage, no pushing, no mobs, and the night still&nbsp;passes.</p>
+<div class="chat">
+<div class="mc"><span style="color:#B388FF">»</span> <span class="w">Lena</span> <span class="gray">stepped away:</span> <span class="w">making dinner</span></div>
+<div class="mc"><span style="color:#69F0AE">«</span> <span class="w">Lena</span> <span class="gray">is back after</span> <span class="w">12 min</span><span class="gray">.</span></div>
+</div>
+
+</div>
+<div class="made">Made by Pavel Erokhin</div>
+</body></html>

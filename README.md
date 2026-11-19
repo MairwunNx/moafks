@@ -1,5 +1,7 @@
 # Mo’Afks
 
+![Mo’Afks: step away, stay safe](https://raw.githubusercontent.com/MairwunNx/moafks/master/media/hero.webp)
+
 <p align="center">
   <a href="https://github.com/MairwunNx/moafks/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/moafks?label=release"></a>
   <a href="https://modrinth.com/plugin/moafks"><img alt="Modrinth" src="https://img.shields.io/modrinth/dt/moafks?logo=modrinth&label=Modrinth&color=00AF5C"></a>
@@ -29,6 +31,9 @@ Mo’Afks runs on Moonlands, my hard survival server with friends. Join at `mine
 - 🌍 **Every player reads their own language,** picked by IP or by their own choice. English, Russian, Spanish, Portuguese, and German come bundled.
 - ✨ **Everyone sees who’s away:** a ring of particles and an [AFK] mark. Add a time limit with a kick if you want one. Vanished players stay hidden.
 - 🧩 **It fits your server:** PlaceholderAPI, TAB, MiniPlaceholders, Plan, WorldAPI, and Allay if you have them, a Grafana dashboard, and `/moafks reload` without a restart.
+
+<p align="center"><img src="https://raw.githubusercontent.com/MairwunNx/moafks/master/media/screenshots/afk.gif" width="760" alt="Lena types /afk making dinner, a ring of particles appears around her, and zombies and a skeleton walk up and leave her alone">
+  <br><sub>Lena types <code>/afk making dinner</code>, and the mobs that come leave her alone</sub></p>
 
 ## Get started
 
